@@ -12,7 +12,7 @@
 	<artifactId>easykitchen</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>easykitchen</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Easykitchen is a tool for managing groceries and recipes in your kitchen.</description>
 	<url/>
 	<licenses>
 		<license/>
