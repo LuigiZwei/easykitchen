@@ -1,13 +1,11 @@
-package net.easykitchen.easykitchen.entities;
+package net.easykitchen.easykitchen.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @AllArgsConstructor
 @Getter
-@Setter
-public class Grocery {
+public class GroceryDto {
     private int id;
     private String gtin;
     private String name;
@@ -19,11 +17,11 @@ public class Grocery {
     private float drainedAmount;
     private String drainedUnit;
 
-    public Grocery() {
-        // Leerer Konstruktor für die Serialisierung
+    public GroceryDto(int id) {
+        this.id = id;
     }
 
-    public Grocery(int id) {
-        this.id = id;
+    public GroceryDto() {
+        
     }
 }

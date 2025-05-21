@@ -75,6 +75,17 @@
             <scope>annotationProcessor</scope>
         </dependency>
 		
+		<dependency>
+            <artifactId>mapstruct-processor</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <version>1.6.3</version>
+        </dependency>
+		
+        <dependency>
+            <artifactId>mapstruct</artifactId>
+            <groupId>org.mapstruct</groupId>
+            <version>1.6.2</version>
+        </dependency>
 	</dependencies>
 
 	<build>
