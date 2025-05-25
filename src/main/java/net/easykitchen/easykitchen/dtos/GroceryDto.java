@@ -2,9 +2,13 @@ package net.easykitchen.easykitchen.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
+@Setter
 public class GroceryDto {
     private int id;
     private String gtin;
@@ -19,9 +23,5 @@ public class GroceryDto {
 
     public GroceryDto(int id) {
         this.id = id;
-    }
-
-    public GroceryDto() {
-        
     }
 }

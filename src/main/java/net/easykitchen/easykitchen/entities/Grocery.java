@@ -2,9 +2,11 @@ package net.easykitchen.easykitchen.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class Grocery {
@@ -18,10 +20,6 @@ public class Grocery {
     private String unit;
     private float drainedAmount;
     private String drainedUnit;
-
-    public Grocery() {
-        // Leerer Konstruktor für die Serialisierung
-    }
 
     public Grocery(int id) {
         this.id = id;

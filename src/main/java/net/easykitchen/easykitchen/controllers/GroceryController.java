@@ -27,7 +27,8 @@ public class GroceryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<GroceryDto> getGrocery(@PathVariable int id) {
-        Grocery grocery = new Grocery(id);
+        Grocery grocery = new Grocery(id, "0000000000000", "Test Grocery", "Test Brand", "Test Category", 
+                                        "https://example.com/image.jpg", 1.0f, "kg", 0.5f, "kg");
         if (grocery == null) {
             return ResponseEntity.notFound().build();
         } else {
