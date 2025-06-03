@@ -1,15 +1,13 @@
 package net.easykitchen.easykitchen.controllers;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
-@Controller
+/*@Controller
 public class HomeController {
     @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("name", "Luis");
+    public String index() {
         return "index";
     }
-}
+}*/
