@@ -1,9 +1,9 @@
 // Script für die Produktverwaltungstabelle
 // Probedatei
 const produkte = [
-  //{ gtin: 1234567890123, name: "Tomatensauce", brand: "Hausmarke", category: "Konserven", imageUrl: "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg", amount: 400, unit: "g", drainedAmount: 240, drainedUnit: "g" },
-  //{ gtin: 9876543210123, name: "Mais", brand: "GoldKorn", category: "Konserven", imageUrl: "https://example.com/image2.jpg", amount: 300, unit: "g", drainedAmount: 200, drainedUnit: "g" },
-  //{ gtin: 1112223334445, name: "Haferflocken", brand: "BioFit", category: "Getreide", imageUrl: "https://example.com/image3.jpg", amount: 500, unit: "g", drainedAmount: 0, drainedUnit: "" }
+  { gtin: 1234567890123, name: "Tomatensauce", brand: "Hausmarke", category: "Konserven", imageUrl: "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg", amount: 400, unit: "g", drainedAmount: 240, drainedUnit: "g" },
+  { gtin: 9876543210123, name: "Mais", brand: "GoldKorn", category: "Konserven", imageUrl: "https://example.com/image2.jpg", amount: 300, unit: "g", drainedAmount: 200, drainedUnit: "g" },
+  { gtin: 1112223334445, name: "Haferflocken", brand: "BioFit", category: "Getreide", imageUrl: "https://example.com/image3.jpg", amount: 500, unit: "g", drainedAmount: 0, drainedUnit: "" }
 ];
 
 let sortKey = '', sortAsc = true;
@@ -12,7 +12,7 @@ let gefilterte = [...produkte];
 
 // Daten ins Array speichern
 
-
+const url =  "http://localhost:8080"
 const tabelle = document.getElementById("produkt-tabelle");
 const suche = document.getElementById("suche");
 const anzeige = document.getElementById("anzahl-produkte");
@@ -109,22 +109,31 @@ function renderTable(arr) {
 // Daten abrufen und Tabelle rendern
 async function fetchDataAndRender() {
   try {
-    const response = await fetch('http://localhost:8080/grocery/1'); // URL anpassen
+    const response = await fetch(url +'/grocery/all'); // URL 
     if (!response.ok) {
       throw new Error(`HTTP Fehler: ${response.status}`);
     }
     const data = await response.json();
     // Falls die Antwort ein Objekt ist, in ein Array umwandeln
-    gefilterte = Array.isArray(data) ? data : [data];
+    const newData = Array.isArray(data) ? data : [data];
 
+    // 1. produkte ersetzen (oder befüllen) mit den neuen Daten
+    produkte.length = 0;          // altes Array leeren
+    produkte.push(...newData);    // alle neuen Elemente einfügen
+
+    // 2. gefilterte = produkte (frisch gefüllt)
+    gefilterte = [...produkte];
+
+    // 3. Tabelle rendern
     renderTable(gefilterte);
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   }
 }
 
+
 // Produkt hinzufügen
-function addProdukt() {
+async function addProdukt() {
   const gtin = Number(document.getElementById("in_gtin").value);
   const name = document.getElementById("in_name").value.trim();
   const brand = document.getElementById("in_brand").value.trim();
@@ -136,27 +145,58 @@ function addProdukt() {
   const drainedUnit = document.getElementById("in_drainedUnit").value.trim();
   
   // Validierung
-  if (!gtin || gtin.toString().length > 14 ||gtin.toString().length<8 || !name || !brand || !category || amount <= 0 || !unit) {
-    alert("Bitte gültige Werte eingeben! GTIN muss 13-stellig sein. Name, Brand, Kategorie, Amount (>0) und Unit sind Pflichtfelder.");
+  if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8 
+      || !name || !brand || !category || amount <= 0 || !unit) {
+    alert("Bitte gültige Werte eingeben! GTIN muss 8–14-stellig sein. Name, Brand, Kategorie, Amount (>0) und Unit sind Pflichtfelder.");
     return;
   }
   
-  // neue Eingabe in Haupt-Array schieben
-  const neu = { gtin, name, brand, category, imageUrl, amount, unit, drainedAmount, drainedUnit };
-  produkte.push(neu);
-  //Nachricht für erfolgreiches hinzufügen
-  showToast("Produkt erfolgreich hinzugefügt!");
-  
-  // Kategorie-Dropdown neu befüllen
-  kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-  fuelleKategorienDropdown();
-  // Suchfilter zurücksetzen und Tabelle neu rendern
-  suche.value = '';
-  gefilterte = [...produkte];
-  sortKey ? sortiereNach(sortKey) : renderTable(gefilterte);
-  // Eingabefelder zurücksetzen
-  document.querySelectorAll('#eingabezeile input').forEach(i => i.value = '');
+  // Neues Produkt‐Objekt
+  const neu = { 
+    gtin, name, brand, category, imageUrl, 
+    amount, unit, drainedAmount, drainedUnit 
+  };
+
+  try {
+    // === POST ans Backend: /grocery 
+    const response = await fetch(url + '/grocery', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(neu)
+    });
+    if (!response.ok) {
+      throw new Error(`Backend-Fehler beim Anlegen: ${response.status}`);
+    }
+
+    // Backend gibt idealerweise das neu angelegte Objekt (oder zumindest den Erfolgsstatus) zurück.
+    const created = await response.json(); 
+    // (Falls dein Backend nichts zurückschickt, kannst du hier einfach "neu" weiterverwenden.)
+
+    // === Lokales Array aktualisieren ===
+    produkte.push(created);   // oder: produkte.push(neu);
+    
+    showToast("Produkt erfolgreich hinzugefügt!");
+
+    // Kategorie‐Dropdown neu befüllen
+    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    fuelleKategorienDropdown();
+
+    // Filter/Suche zurücksetzen und Tabelle neu rendern
+    suche.value = '';
+    gefilterte = [...produkte];
+    sortKey ? sortiereNach(sortKey) : renderTable(gefilterte);
+
+    // Eingabefelder leeren
+    document.querySelectorAll('#eingabezeile input').forEach(i => i.value = '');
+
+  } catch (error) {
+    console.error("Fehler beim Hinzufügen:", error);
+    alert("Produkt konnte nicht hinzugefügt werden. Bitte versuche es später erneut.");
+  }
 }
+
 
 
 // Sortierung
@@ -255,8 +295,9 @@ function filtereTabelle(term = suche.value, kategorie = kategorieFilter.value) {
 }*/
 
 // Bearbeiten 
-function bearbeiten(idx) {
-  const p = gefilterte[idx];
+async function bearbeiten(idx) {
+  const p = gefilterte[idx]; // p ist das geändernde Objekt
+  // Alte Werte in den Prompts anzeigen, Änderungen reinschreiben lassen
   p.name = prompt("Name:", p.name) ?? p.name;
   p.brand = prompt("Brand:", p.brand) ?? p.brand;
   p.category = prompt("Category:", p.category) ?? p.category;
@@ -266,100 +307,150 @@ function bearbeiten(idx) {
   p.drainedAmount = Number(prompt("Drained Amount:", p.drainedAmount)) || p.drainedAmount;
   p.drainedUnit = prompt("Drained Unit:", p.drainedUnit) ?? p.drainedUnit;
   
-  // Originalprodukt aktualisieren
-  const origIdx = produkte.findIndex(x => x.gtin === p.gtin);
-  produkte[origIdx] = p;
-  
-  // Wenn Kategorie geändert wurde Kategorien-Dropdown aktualisieren
-  kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-  fuelleKategorienDropdown();
-  // Tabelle aktualisieren
-  filtereTabelle(suche.value, kategorieFilter.value);
-  //Nachricht bei erfolgreichem Bearbeiten
-  showToast("Produkt bearbeitet!");
+  // === PUT ans Backend: /grocery/{gtin} ===
+  try {
+    const response = await fetch(url + `/grocery/${p.gtin}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(p)
+    });
+    if (!response.ok) {
+      throw new Error(`Backend-Fehler beim Updaten: ${response.status}`);
+    }
+
+    // Backend sendet idealerweise das aktualisierte Objekt zurück (oder 204 No Content).
+    const updated = await response.json(); 
+    // Fallback, falls dein Backend gar nichts zurückgibt: mit p arbeiten.
+
+    // === Lokales Array aktualisieren ===
+    const origIdx = produkte.findIndex(x => x.gtin === updated.gtin);
+    if (origIdx !== -1) {
+      produkte[origIdx] = updated;
+    } else {
+      // Soll nicht passieren, aber zur Sicherheit:
+      produkte.push(updated);
+    }
+
+    // Wenn Kategorie geändert wurde, Dropdown neu befüllen
+    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    fuelleKategorienDropdown();
+
+    // Tabelle neu rendern (unter Berücksichtigung der aktuellen Filter)
+    filtereTabelle(suche.value, kategorieFilter.value);
+    showToast("Produkt erfolgreich bearbeitet!");
+
+  } catch (error) {
+    console.error("Fehler beim Bearbeiten:", error);
+    alert("Produkt konnte nicht gespeichert werden. Bitte versuche es später erneut.");
+  }
 }
 
-// Löschen 
-        function loeschen(idx) {
-          const p = gefilterte[idx];
-          const origIdx = produkte.findIndex(x => x.gtin === p.gtin);
-          produkte.splice(origIdx, 1);
-          
-          // Kategorien-Dropdown aktualisieren
-          kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-          fuelleKategorienDropdown();
-          
-          filtereTabelle(suche.value, kategorieFilter.value);
-          //Nachricht bei erfolgreichem Löschen
-          showToast("Produkt gelöscht!");
-        }
-        
-        // Toast-Nachricht anzeigen
-        function showToast(message, duration = 3000) {
-          const container = document.getElementById("toast-container");
-          const toast = document.createElement("div");
-          toast.className = "toast";
-          toast.textContent = message;
-          container.appendChild(toast);
-          setTimeout(() => {
-            toast.style.opacity = "0";
-            setTimeout(() => container.removeChild(toast), 500);
-          }, duration);
-        }
-        
-        function exportCSV() {
-          // Kopfzeile definieren
-          const header = [
-            'GTIN','Name','Brand','Category','Amount','Unit','DrainedAmount','DrainedUnit'
-          ];
-          // Datenzeilen generieren
-          const rows = gefilterte.map(p => [
-            p.gtin,
-            `"${p.name.replace(/"/g, '""')}"`,        // Anführungszeichen in Strings escapen
-            `"${p.brand.replace(/"/g, '""')}"`,
-            `"${p.category.replace(/"/g, '""')}"`,
-            p.amount,
-            `"${p.unit.replace(/"/g, '""')}"`,
-            p.drainedAmount,
-            `"${p.drainedUnit.replace(/"/g, '""')}"`
-          ]);
-        
-          // CSV-String zusammenbauen
-          const csvContent =
-            header.join(',') + '\n' +
-            rows.map(r => r.join(',')).join('\n');
-        
-          // Blob und Download-Link erzeugen
-          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'produkte_export.csv';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-        }
 
-        // Event Listener
-        // für Sortiere nach Spaltenüberschrift
-        document.querySelectorAll("th[data-key]").forEach(th =>
-          th.addEventListener("click", () => sortiereNach(th.dataset.key))
-          );
-          // für Suchfeld
-          suche.addEventListener("input", () => filtereTabelle(suche.value, kategorieFilter.value));
-          // für Filter Dropdown
-          kategorieFilter.addEventListener("change", () => filtereTabelle(suche.value, kategorieFilter.value));
-          // für Hinzufügen-Button
-          btnAdd.addEventListener("click", addProdukt);
-          // für Export-Button
-          document.getElementById('btn_export')
-          .addEventListener('click', exportCSV);
-          
-          // Initialisierung
-          document.addEventListener('DOMContentLoaded', () => {
-            fetchDataAndRender();
-            renderTable(gefilterte);
-            updateDashboard();
-            fuelleKategorienDropdown();
-          });
+// Löschen 
+async function loeschen(idx) {
+  const p = gefilterte[idx];
+
+  // Optional: Bestätigungsdialog
+  if (!confirm(`Produkt "${p.name}" wirklich löschen?`)) return;
+
+  try {
+    // === DELETE ans Backend: /grocery/{gtin} ===
+    const response = await fetch(url + `/grocery/${p.gtin}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) {
+      throw new Error(`Backend-Fehler beim Löschen: ${response.status}`);
+    }
+
+    // === Lokales Array aktualisieren ===
+    const origIdx = produkte.findIndex(x => x.gtin === p.gtin);
+    if (origIdx !== -1) {
+      produkte.splice(origIdx, 1);
+    }
+
+    // Kategorie‐Dropdown neu befüllen, Tabelle filtern/neu rendern
+    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    fuelleKategorienDropdown();
+    filtereTabelle(suche.value, kategorieFilter.value);
+
+    showToast("Produkt erfolgreich gelöscht!");
+
+  } catch (error) {
+    console.error("Fehler beim Löschen:", error);
+    alert("Produkt konnte nicht gelöscht werden. Bitte versuche es später erneut.");
+  }
+}
+
+
+// Toast-Nachricht anzeigen
+function showToast(message, duration = 3000) {
+  const container = document.getElementById("toast-container");
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => container.removeChild(toast), 500);
+  }, duration);
+}
+
+function exportCSV() {
+  // Kopfzeile definieren
+  const header = [
+    'GTIN','Name','Brand','Category','Amount','Unit','DrainedAmount','DrainedUnit'
+  ];
+  // Datenzeilen generieren
+  const rows = gefilterte.map(p => [
+    p.gtin,
+    `"${p.name.replace(/"/g, '""')}"`,        // Anführungszeichen in Strings escapen
+    `"${p.brand.replace(/"/g, '""')}"`,
+    `"${p.category.replace(/"/g, '""')}"`,
+    p.amount,
+    `"${p.unit.replace(/"/g, '""')}"`,
+    p.drainedAmount,
+    `"${p.drainedUnit.replace(/"/g, '""')}"`
+  ]);
+
+  // CSV-String zusammenbauen
+  const csvContent =
+    header.join(',') + '\n' +
+    rows.map(r => r.join(',')).join('\n');
+
+  // Blob und Download-Link erzeugen
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'produkte_export.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+// Event Listener
+// für Sortiere nach Spaltenüberschrift
+document.querySelectorAll("th[data-key]").forEach(th =>
+  th.addEventListener("click", () => sortiereNach(th.dataset.key))
+  );
+  // für Suchfeld
+  suche.addEventListener("input", () => filtereTabelle(suche.value, kategorieFilter.value));
+  // für Filter Dropdown
+  kategorieFilter.addEventListener("change", () => filtereTabelle(suche.value, kategorieFilter.value));
+  // für Hinzufügen-Button
+  btnAdd.addEventListener("click", addProdukt);
+  // für Export-Button
+  document.getElementById('btn_export')
+  .addEventListener('click', exportCSV);
+  
+  // Initialisierung
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchDataAndRender();
+    renderTable(gefilterte);
+    updateDashboard();
+    fuelleKategorienDropdown();
+  });
