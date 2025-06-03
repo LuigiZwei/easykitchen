@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Meine Rezepte</title>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; }
+    #recipe-list { margin-bottom: 2rem; }
+    .recipe { padding: .5rem; border-bottom: 1px solid #ddd; }
+    form { display: grid; gap: .5rem; max-width: 400px; }
+    input, textarea, button { padding: .5rem; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>Gespeicherte Rezepte</h1>
+  <div id="recipe-list">
+    <!-- Hier werden die Rezepte angezeigt -->
+  </div>
+
+  <h2>Neues Rezept hinzufügen</h2>
+  <form id="recipe-form">
+    <input type="text" id="title" placeholder="Titel" required />
+    <textarea id="instructions" placeholder="Anleitung" rows="4" required></textarea>
+    <button type="submit">Speichern</button>
+  </form>
+
+  <script src="mock-backend.js"></script>
+  <script src="rezepte.js"></script>
+</body>
+</html>
