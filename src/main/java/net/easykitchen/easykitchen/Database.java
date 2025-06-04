@@ -15,7 +15,7 @@ public class Database {
 
     private static final String DB_URL = "jdbc:sqlite:groceries.db";
 
-    private static void createGroceryTable() {
+    public static void createGroceryTable() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS groceries (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +39,7 @@ public class Database {
         }
     }
 
-    private static void deleteTable(String name) {
+    public static void deleteTable(String name) {
         String sql = String.format("DROP TABLE IF EXISTS %s;", name);
 
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -53,7 +53,7 @@ public class Database {
         }
     }
 
-    private static void addGrocery(String gtin, String name, String brand, String category, String imageUrl,
+    public static void addGrocery(String gtin, String name, String brand, String category, String imageUrl,
             float amount, String unit, float drainedAmount, String drainedUnit) {
         String sql = "INSERT INTO groceries (gtin, name, brand, category, imageUrl, amount, unit, drainedAmount, drainedUnit) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DriverManager.getConnection(DB_URL);
@@ -77,7 +77,7 @@ public class Database {
         }
     }
 
-    private static List<Grocery> loadGroceries() {
+    public static List<Grocery> loadGroceries() {
         List<Grocery> groceries = new ArrayList<>();
 
         String sql = "SELECT * FROM groceries ORDER BY name";
