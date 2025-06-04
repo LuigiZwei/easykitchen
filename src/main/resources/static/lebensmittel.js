@@ -18,9 +18,8 @@ const kategorieFilter = document.getElementById("kategorie-filter");
 const btnAdd = document.getElementById("btn_add");
 
 
-// Dashboard aktualisieren - zeigt Anzahl der gefilterten Produkte
+// Update dashboard with filtered product count
 function updateDashboard() {
-  // Gesamtanzahl
   anzeige.textContent = groceriesFiltered.length;
 
   // Durchschnittliche Menge berechnen
@@ -71,7 +70,7 @@ function renderTable(arr) {
     table.appendChild(tr);
   });
 
-  // Menü für Bearbeiten und Löschen
+  // Action menu for edit and delete
   document.querySelectorAll('.actions button').forEach(btn => {
     const menu = btn.nextElementSibling;
     btn.addEventListener('click', e => {
@@ -87,23 +86,22 @@ function renderTable(arr) {
     document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
   });
 
-  // Bearbeit und Lösch Buttons
+  // Edit and delete buttons
   document.querySelectorAll('.menu .edit').forEach(btn => {
     btn.addEventListener('click', e => bearbeiten(Number(e.target.dataset.idx)));
   });
   document.querySelectorAll('.menu .delete').forEach(btn => {
     btn.addEventListener('click', e => loeschen(Number(e.target.dataset.idx)));
   });
-  //Dashboard aktualisieren
   updateDashboard();
 }
 
-// Daten abrufen und Tabelle rendern
+// Fetch data and render table
 async function fetchDataAndRender() {
   try {
-    const response = await fetch(url + '/grocery/all'); // URL 
+    const response = await fetch(url + '/grocery/all');
     if (!response.ok) {
-      throw new Error(`HTTP Fehler: ${response.status}`);
+      throw new Error(`HTTP error: ${response.status}`);
     }
     const data = await response.json();
     // Falls die Antwort ein Objekt ist, in ein Array umwandeln
@@ -116,10 +114,9 @@ async function fetchDataAndRender() {
     // 2. gefilterte = produkte (frisch gefüllt)
     groceriesFiltered = [...groceries];
 
-    // 3. Tabelle rendern
     renderTable(groceriesFiltered);
   } catch (error) {
-    console.error('Fehler beim Abrufen der Daten:', error);
+    console.error('Error fetching data:', error);
   }
 }
 
@@ -134,21 +131,21 @@ async function addProduct() {
   const drainedAmount = Number(document.getElementById("in_drainedAmt").value);
   const drainedUnit = document.getElementById("in_drainedUnit").value.trim();
 
-  // Validierung
+  // Validation
   if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8
     || !name || !brand || !category || amount <= 0 || !unit) {
-    alert("Bitte gültige Werte eingeben! GTIN muss 8–14-stellig sein. Name, Brand, Kategorie, Amount (>0) und Unit sind Pflichtfelder.");
+    alert("Please enter valid values! GTIN must be 8–14 digits. Name, Brand, Category, Amount (>0) and Unit are required.");
     return;
   }
 
-  // Neues Produkt‐Objekt
+  // New product object
   const neu = {
     gtin, name, brand, category, imageUrl,
     amount, unit, drainedAmount, drainedUnit
   };
 
   try {
-    // === POST ans Backend: /grocery 
+    // POST to backend: /grocery
     const response = await fetch(url + '/grocery', {
       method: 'POST',
       headers: {
@@ -157,17 +154,14 @@ async function addProduct() {
       body: JSON.stringify(neu)
     });
     if (!response.ok) {
-      throw new Error(`Backend-Fehler beim Anlegen: ${response.status}`);
+      throw new Error(`Backend error on create: ${response.status}`);
     }
 
-    // Backend gibt idealerweise das neu angelegte Objekt (oder zumindest den Erfolgsstatus) zurück.
     const created = await response.json();
-    // (Falls dein Backend nichts zurückschickt, kannst du hier einfach "neu" weiterverwenden.)
 
-    // === Lokales Array aktualisieren ===
-    groceries.push(created);   // oder: produkte.push(neu);
+    groceries.push(created);
 
-    showToast("Produkt erfolgreich hinzugefügt!");
+    showToast("Product added successfully!");
 
     // Kategorie‐Dropdown neu befüllen
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
@@ -182,8 +176,8 @@ async function addProduct() {
     document.querySelectorAll('#eingabezeile input').forEach(i => i.value = '');
 
   } catch (error) {
-    console.error("Fehler beim Hinzufügen:", error);
-    alert("Produkt konnte nicht hinzugefügt werden. Bitte versuche es später erneut.");
+    console.error("Error adding product:", error);
+    alert("Product could not be added. Please try again later.");
   }
 }
 
@@ -244,41 +238,12 @@ function filtereTabelle(term = search.value, kategorie = kategorieFilter.value) 
     return passtZurSuche && passtZurKategorie;
   });
 
-  // Sortierung oder direktes Rendern
   sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 }
-/*
-// Filter mit Operatoren nur für amount 
-function filtereTabelle(term = suche.value, kategorie = kategorieFilter.value) {
-  const t = term.trim().toLowerCase();
-  
-  const matchOperator = t.match(/^([<>=])\s*(\d+(\.\d+)?)/); // Zahlensuche
-  gefilterte = produkte.filter(p => {
-    const passtZurKategorie = (kategorie === 'alle' || p.category.toLowerCase() === kategorie.toLowerCase());
-    
-    if (matchOperator) {
-      const operator = matchOperator[1];
-      const wert = parseFloat(matchOperator[2]);
-      switch (operator) {
-        case '=': return p.amount === wert && passtZurKategorie;
-        case '>': return p.amount > wert && passtZurKategorie;
-        case '<': return p.amount < wert && passtZurKategorie;
-        default: return false;
-      }
-    }
-    
-    // Standard-Suche über alle Felder
-    const passtZurSuche = Object.values(p).some(v => String(v).toLowerCase().includes(t));
-    return passtZurSuche && passtZurKategorie;
-  });
-  
-  sortKey ? sortBy(sortKey) : renderTable(gefilterte);
-}*/
 
-// Bearbeiten 
+// Edit product
 async function bearbeiten(idx) {
-  const p = groceriesFiltered[idx]; // p ist das geändernde Objekt
-  // Alte Werte in den Prompts anzeigen, Änderungen reinschreiben lassen
+  const p = groceriesFiltered[idx];
   p.name = prompt("Name:", p.name) ?? p.name;
   p.brand = prompt("Brand:", p.brand) ?? p.brand;
   p.category = prompt("Category:", p.category) ?? p.category;
@@ -288,7 +253,7 @@ async function bearbeiten(idx) {
   p.drainedAmount = Number(prompt("Drained Amount:", p.drainedAmount)) || p.drainedAmount;
   p.drainedUnit = prompt("Drained Unit:", p.drainedUnit) ?? p.drainedUnit;
 
-  // === PUT ans Backend: /grocery/{gtin} ===
+  // PUT to backend: /grocery/{gtin}
   try {
     const response = await fetch(url + `/grocery/${p.gtin}`, {
       method: 'PUT',
@@ -298,19 +263,15 @@ async function bearbeiten(idx) {
       body: JSON.stringify(p)
     });
     if (!response.ok) {
-      throw new Error(`Backend-Fehler beim Updaten: ${response.status}`);
+      throw new Error(`Backend error on update: ${response.status}`);
     }
 
-    // Backend sendet idealerweise das aktualisierte Objekt zurück (oder 204 No Content).
     const updated = await response.json();
-    // Fallback, falls dein Backend gar nichts zurückgibt: mit p arbeiten.
 
-    // === Lokales Array aktualisieren ===
     const origIdx = groceries.findIndex(x => x.gtin === updated.gtin);
     if (origIdx !== -1) {
       groceries[origIdx] = updated;
     } else {
-      // Soll nicht passieren, aber zur Sicherheit:
       groceries.push(updated);
     }
 
@@ -318,34 +279,30 @@ async function bearbeiten(idx) {
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
     setCategoryDropdown();
 
-    // Tabelle neu rendern (unter Berücksichtigung der aktuellen Filter)
     filtereTabelle(search.value, kategorieFilter.value);
-    showToast("Produkt erfolgreich bearbeitet!");
+    showToast("Product updated successfully!");
 
   } catch (error) {
-    console.error("Fehler beim Bearbeiten:", error);
-    alert("Produkt konnte nicht gespeichert werden. Bitte versuche es später erneut.");
+    console.error("Error updating product:", error);
+    alert("Product could not be saved. Please try again later.");
   }
 }
 
-
-// Löschen 
+// Delete product
 async function loeschen(idx) {
   const p = groceriesFiltered[idx];
 
-  // Optional: Bestätigungsdialog
-  if (!confirm(`Produkt "${p.name}" wirklich löschen?`)) return;
+  if (!confirm(`Delete product "${p.name}"?`)) return;
 
   try {
-    // === DELETE ans Backend: /grocery/{gtin} ===
+    // DELETE to backend: /grocery/{gtin}
     const response = await fetch(url + `/grocery/${p.gtin}`, {
       method: 'DELETE'
     });
     if (!response.ok) {
-      throw new Error(`Backend-Fehler beim Löschen: ${response.status}`);
+      throw new Error(`Backend error on delete: ${response.status}`);
     }
 
-    // === Lokales Array aktualisieren ===
     const origIdx = groceries.findIndex(x => x.gtin === p.gtin);
     if (origIdx !== -1) {
       groceries.splice(origIdx, 1);
@@ -356,16 +313,15 @@ async function loeschen(idx) {
     setCategoryDropdown();
     filtereTabelle(search.value, kategorieFilter.value);
 
-    showToast("Produkt erfolgreich gelöscht!");
+    showToast("Product deleted successfully!");
 
   } catch (error) {
-    console.error("Fehler beim Löschen:", error);
-    alert("Produkt konnte nicht gelöscht werden. Bitte versuche es später erneut.");
+    console.error("Error deleting product:", error);
+    alert("Product could not be deleted. Please try again later.");
   }
 }
 
-
-// Toast-Nachricht anzeigen
+// Show toast message
 function showToast(message, duration = 3000) {
   const container = document.getElementById("toast-container");
   const toast = document.createElement("div");
@@ -379,14 +335,14 @@ function showToast(message, duration = 3000) {
 }
 
 function exportCSV() {
-  // Kopfzeile definieren
+  // Define header
   const header = [
     'GTIN', 'Name', 'Brand', 'Category', 'Amount', 'Unit', 'DrainedAmount', 'DrainedUnit'
   ];
-  // Datenzeilen generieren
+  // Generate data rows
   const rows = groceriesFiltered.map(p => [
     p.gtin,
-    `"${p.name.replace(/"/g, '""')}"`,        // Anführungszeichen in Strings escapen
+    `"${p.name.replace(/"/g, '""')}"`,
     `"${p.brand.replace(/"/g, '""')}"`,
     `"${p.category.replace(/"/g, '""')}"`,
     p.amount,
@@ -395,12 +351,12 @@ function exportCSV() {
     `"${p.drainedUnit.replace(/"/g, '""')}"`
   ]);
 
-  // CSV-String zusammenbauen
+  // Build CSV string
   const csvContent =
     header.join(',') + '\n' +
     rows.map(r => r.join(',')).join('\n');
 
-  // Blob und Download-Link erzeugen
+  // Create blob and download link
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -412,23 +368,17 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
-
-// Event Listener
-// für Sortiere nach Spaltenüberschrift
+// Event listeners
 document.querySelectorAll("th[data-key]").forEach(th =>
   th.addEventListener("click", () => sortBy(th.dataset.key))
 );
-// für Suchfeld
 search.addEventListener("input", () => filtereTabelle(search.value, kategorieFilter.value));
-// für Filter Dropdown
 kategorieFilter.addEventListener("change", () => filtereTabelle(search.value, kategorieFilter.value));
-// für Hinzufügen-Button
 btnAdd.addEventListener("click", addProduct);
-// für Export-Button
 document.getElementById('btn_export')
   .addEventListener('click', exportCSV);
 
-// Initialisierung
+// Initialization
 document.addEventListener('DOMContentLoaded', () => {
   fetchDataAndRender();
   renderTable(groceriesFiltered);
