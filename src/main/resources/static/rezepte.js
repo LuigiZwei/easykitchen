@@ -1,10 +1,10 @@
-const apiBase = '/api/recipes'; // passe URL an
+const apiBase = '/api/recipes';
 
-// Lädt beim Seitenaufruf alle Rezepte und rendert sie
+// Loads all recipes and renders them
 async function loadRecipes() {
   try {
     const res = await fetch(apiBase);
-    if (!res.ok) throw new Error('Fehler beim Laden');
+    if (!res.ok) throw new Error('Error loading');
     const recipes = await res.json();
     const list = document.getElementById('recipe-list');
     list.innerHTML = recipes.map(r => `
@@ -15,11 +15,11 @@ async function loadRecipes() {
     `).join('');
   } catch (err) {
     console.error(err);
-    document.getElementById('recipe-list').textContent = 'Konnte Rezepte nicht laden.';
+    document.getElementById('recipe-list').textContent = 'Could not load recipes.';
   }
 }
 
-// Sendet ein neues Rezept an das Backend
+// Sends a new recipe to the backend
 async function addRecipe(event) {
   event.preventDefault();
   const title = document.getElementById('title').value.trim();
@@ -33,18 +33,16 @@ async function addRecipe(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error('Fehler beim Speichern');
-    // Formular zurücksetzen
+    if (!res.ok) throw new Error('Error saving');
     event.target.reset();
-    // Liste neu laden, um das neue Rezept zu zeigen
     await loadRecipes();
   } catch (err) {
     console.error(err);
-    alert('Speichern fehlgeschlagen.');
+    alert('Saving failed.');
   }
 }
 
-// Event-Handler registrieren
+// Register event handlers
 document.addEventListener('DOMContentLoaded', () => {
   loadRecipes();
   document.getElementById('recipe-form').addEventListener('submit', addRecipe);
