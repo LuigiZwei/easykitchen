@@ -1,43 +1,39 @@
-// Script for the product management table
+// Script for the grocery management table
 // Sample file
-const groceries = [
-  { gtin: 1234567890123, name: "Tomatensauce", brand: "Hausmarke", category: "Konserven", imageUrl: "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg", amount: 400, unit: "g", drainedAmount: 240, drainedUnit: "g" },
-  { gtin: 9876543210123, name: "Mais", brand: "GoldKorn", category: "Konserven", imageUrl: "https://example.com/image2.jpg", amount: 300, unit: "g", drainedAmount: 200, drainedUnit: "g" },
-  { gtin: 1112223334445, name: "Haferflocken", brand: "BioFit", category: "Getreide", imageUrl: "https://example.com/image3.jpg", amount: 500, unit: "g", drainedAmount: 0, drainedUnit: "" }
-];
+const groceries = [];
 
 let sortKey = '', sortAsc = true;
 let groceriesFiltered = [...groceries];
 
 
 const url = "http://localhost:8080"
-const table = document.getElementById("produkt-tabelle");
-const search = document.getElementById("suche");
-const anzeige = document.getElementById("anzahl-produkte");
-const kategorieFilter = document.getElementById("kategorie-filter");
-const btnAdd = document.getElementById("btn_add");
+const table = document.getElementById("groceryTable");
+const search = document.getElementById("search");
+const display = document.getElementById("groceryCount");
+const categoryFilter = document.getElementById("categoryFilter");
+const buttonAddGrocery = document.getElementById("buttonAddGrocery");
 
 
-// Update dashboard with filtered product count
+// Update dashboard with filtered grocery count
 function updateDashboard() {
-  anzeige.textContent = groceriesFiltered.length;
+  display.textContent = groceriesFiltered.length;
 
   // Calculate average amount
-  const summen = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
-  const durchschnitt = groceriesFiltered.length ? (summen / groceriesFiltered.length).toFixed(1) : 0;
-  document.getElementById("avg-amount").textContent = durchschnitt;
+  const sum = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const average = groceriesFiltered.length ? (sum / groceriesFiltered.length).toFixed(1) : 0;
+  document.getElementById("groceryAverageAmount").textContent = average;
 
   // Count categories
-  const statistik = {};
+  const statistic = {};
   groceriesFiltered.forEach(p => {
-    statistik[p.category] = (statistik[p.category] || 0) + 1;
+    statistic[p.category] = (statistic[p.category] || 0) + 1;
   });
 
-  const ul = document.getElementById("kategorie-statistik");
+  const ul = document.getElementById("categoryStatistic");
   ul.innerHTML = '';
-  Object.entries(statistik).forEach(([kategorie, anzahl]) => {
+  Object.entries(statistic).forEach(([category, count]) => {
     const li = document.createElement("li");
-    li.textContent = `${kategorie}: ${anzahl}`;
+    li.textContent = `${category}: ${count}`;
     ul.appendChild(li);
   });
 }
@@ -88,10 +84,10 @@ function renderTable(arr) {
 
   // Edit and delete buttons
   document.querySelectorAll('.menu .edit').forEach(btn => {
-    btn.addEventListener('click', e => bearbeiten(Number(e.target.dataset.idx)));
+    btn.addEventListener('click', e => edit(Number(e.target.dataset.idx)));
   });
   document.querySelectorAll('.menu .delete').forEach(btn => {
-    btn.addEventListener('click', e => loeschen(Number(e.target.dataset.idx)));
+    btn.addEventListener('click', e => deleteGrocery(Number(e.target.dataset.idx)));
   });
   updateDashboard();
 }
@@ -132,11 +128,11 @@ async function addProduct() {
   // Validation
   if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8
     || !name || !brand || !category || amount <= 0 || !unit) {
-    alert("Please enter valid values! GTIN must be 8–14 digits. Name, Brand, Category, Amount (>0) and Unit are required.");
+    alert("Bitte gültige Werte eingeben! GTIN muss 8–14 Ziffern haben. Name, Marke, Kategorie, Menge (>0) und Einheit sind Pflichtfelder.");
     return;
   }
 
-  // New product object
+  // New grocery object
   const neu = {
     gtin, name, brand, category, imageUrl,
     amount, unit, drainedAmount, drainedUnit
@@ -152,17 +148,17 @@ async function addProduct() {
       body: JSON.stringify(neu)
     });
     if (!response.ok) {
-      throw new Error(`Backend error on create: ${response.status}`);
+      throw new Error(`Serverfehler: ${response.status}`);
     }
 
     const created = await response.json();
 
     groceries.push(created);
 
-    showToast("Product added successfully!");
+    showToast("Lebensmittel hinzugefügt!");
 
     // Refill category dropdown
-    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
     setCategoryDropdown();
 
     // Reset filter/search and re-render table
@@ -174,8 +170,8 @@ async function addProduct() {
     document.querySelectorAll('#addGrocery input').forEach(i => i.value = '');
 
   } catch (error) {
-    console.error("Error adding product:", error);
-    alert("Product could not be added. Please try again later.");
+    console.error("Fehler beim Hinzufügen:", error);
+    alert("Lebensmittel konnte nicht hinzugefügt werden. Bitte versuchen Sie es später erneut.");
   }
 }
 
@@ -197,21 +193,21 @@ function sortBy(key) {
 }
 
 function setCategoryDropdown() {
-  const kategorien = [...new Set(groceries.map(p => p.category))];
-  kategorien.forEach(cat => {
+  const categories = [...new Set(groceries.map(p => p.category))];
+  categories.forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat;
     opt.textContent = cat;
-    kategorieFilter.appendChild(opt);
+    categoryFilter.appendChild(opt);
   });
 }
 
-function filtereTabelle(term = search.value, kategorie = kategorieFilter.value) {
+function filtereTabelle(term = search.value, category = categoryFilter.value) {
   const t = term.trim().toLowerCase();
   const matchOperator = t.match(/^([<>=])\s*(\d+(\.\d+)?)/);
 
   groceriesFiltered = groceries.filter(p => {
-    const passtZurKategorie = (kategorie === 'alle' || p.category.toLowerCase() === kategorie.toLowerCase());
+    const passtZurKategorie = (category === 'all' || p.category.toLowerCase() === category.toLowerCase());
 
     if (matchOperator) {
       const operator = matchOperator[1];
@@ -239,17 +235,17 @@ function filtereTabelle(term = search.value, kategorie = kategorieFilter.value) 
   sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 }
 
-// Edit product
-async function bearbeiten(idx) {
+// Edit grocery
+async function edit(idx) {
   const p = groceriesFiltered[idx];
   p.name = prompt("Name:", p.name) ?? p.name;
-  p.brand = prompt("Brand:", p.brand) ?? p.brand;
-  p.category = prompt("Category:", p.category) ?? p.category;
-  p.imageUrl = prompt("Image URL:", p.imageUrl) ?? p.imageUrl;
-  p.amount = Number(prompt("Amount:", p.amount)) || p.amount;
-  p.unit = prompt("Unit:", p.unit) ?? p.unit;
-  p.drainedAmount = Number(prompt("Drained Amount:", p.drainedAmount)) || p.drainedAmount;
-  p.drainedUnit = prompt("Drained Unit:", p.drainedUnit) ?? p.drainedUnit;
+  p.brand = prompt("Marke:", p.brand) ?? p.brand;
+  p.category = prompt("Kategorie:", p.category) ?? p.category;
+  p.imageUrl = prompt("Bild:", p.imageUrl) ?? p.imageUrl;
+  p.amount = Number(prompt("Menge:", p.amount)) || p.amount;
+  p.unit = prompt("Einheit:", p.unit) ?? p.unit;
+  p.drainedAmount = Number(prompt("Abtropfgewicht:", p.drainedAmount)) || p.drainedAmount;
+  p.drainedUnit = prompt("Abtropfgewicht Einheit:", p.drainedUnit) ?? p.drainedUnit;
 
   // PUT to backend: /grocery/{gtin}
   try {
@@ -274,23 +270,23 @@ async function bearbeiten(idx) {
     }
 
     // If category was changed, refill dropdown
-    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
     setCategoryDropdown();
 
-    filtereTabelle(search.value, kategorieFilter.value);
-    showToast("Product updated successfully!");
+    filtereTabelle(search.value, categoryFilter.value);
+    showToast("Lebensmittel erfolgreich aktualisiert!");
 
   } catch (error) {
-    console.error("Error updating product:", error);
-    alert("Product could not be saved. Please try again later.");
+    console.error("Fehler beim Aktualisieren:", error);
+    alert("Lebensmittel konnte nicht gespeichert werden. Bitte versuchen Sie es später erneut.");
   }
 }
 
-// Delete product
-async function loeschen(idx) {
+// Delete grocery
+async function deleteGrocery(idx) {
   const p = groceriesFiltered[idx];
 
-  if (!confirm(`Delete product "${p.name}"?`)) return;
+  if (!confirm(`Lebensmittel "${p.name}" wirklich löschen?`)) return;
 
   try {
     // DELETE to backend: /grocery/{gtin}
@@ -307,21 +303,21 @@ async function loeschen(idx) {
     }
 
     // Refill category dropdown, filter/re-render table
-    kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
+    categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
     setCategoryDropdown();
-    filtereTabelle(search.value, kategorieFilter.value);
+    filtereTabelle(search.value, categoryFilter.value);
 
-    showToast("Product deleted successfully!");
+    showToast("Lebensmittel erfolgreich gelöscht!");
 
   } catch (error) {
-    console.error("Error deleting product:", error);
-    alert("Product could not be deleted. Please try again later.");
+    console.error("Fehler beim Löschen:", error);
+    alert("Lebensmittel konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut.");
   }
 }
 
 // Show toast message
 function showToast(message, duration = 3000) {
-  const container = document.getElementById("toast-container");
+  const container = document.getElementById("toastContainer");
   const toast = document.createElement("div");
   toast.className = "toast";
   toast.textContent = message;
@@ -370,10 +366,10 @@ function exportCSV() {
 document.querySelectorAll("th[data-key]").forEach(th =>
   th.addEventListener("click", () => sortBy(th.dataset.key))
 );
-search.addEventListener("input", () => filtereTabelle(search.value, kategorieFilter.value));
-kategorieFilter.addEventListener("change", () => filtereTabelle(search.value, kategorieFilter.value));
-btnAdd.addEventListener("click", addProduct);
-document.getElementById('btn_export')
+search.addEventListener("input", () => filtereTabelle(search.value, categoryFilter.value));
+categoryFilter.addEventListener("change", () => filtereTabelle(search.value, categoryFilter.value));
+buttonAddGrocery.addEventListener("click", addProduct);
+document.getElementById('buttonExportCsv')
   .addEventListener('click', exportCSV);
 
 // Initialization

@@ -26,7 +26,7 @@ body {
 }
 
 /* unnecessary element */
-.fusszeile {
+.footer {
   background-color: #464646;
   position: absolute;
   background-attachment: fixed;
@@ -204,7 +204,7 @@ body {
   border-radius: 6px;
 }
 
-.dashboard #kategorie-statistik {
+.dashboard #categoryStatistic {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -224,8 +224,8 @@ input[type="number"] {
   margin: 0px 0px 10px 0px;
 }
 
-/* styled product table */
-.styled-table {
+/* styled grocery table */
+.styledTable {
   width: 100%;
   border-collapse: collapse;
   margin: 0px 0px 0px 0px;
@@ -235,31 +235,31 @@ input[type="number"] {
 }
 
 /* table header */
-.styled-table thead tr {
+.styledTable thead tr {
   background-color: #353535;
   color: #ffffff;
   text-align: left;
 }
 
 /* cell size */
-.styled-table th,
-.styled-table td {
+.styledTable th,
+.styledTable td {
   padding: 12px 15px;
   border: 1px solid #dddddd;
 }
 
 /* odd rows different color */
-.styled-table tbody tr {
+.styledTable tbody tr {
   background-color: #f9f9f9;
 }
 
 /* even rows different color */
-.styled-table tbody tr:nth-of-type(even) {
+.styledTable tbody tr:nth-of-type(even) {
   background-color: #f1f1f1;
 }
 
 /* hover row color */
-.styled-table tbody tr:hover {
+.styledTable tbody tr:hover {
   background-color: #e0e0e0;
 }
 
@@ -336,7 +336,7 @@ button {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-#toast-container {
+#toastContainer {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -347,7 +347,7 @@ button {
 }
 
 /* Export button */
-#btn_export {
+#buttonExportCsv {
   padding: 0.5rem 1rem;
   border: 1px solid #333;
   border-radius: 4px;
@@ -356,6 +356,6 @@ button {
   max-width: 200px;
 }
 
-#btn_export:hover {
+#buttonExportCsv:hover {
   background: #e0e0e0;
 }

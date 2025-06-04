@@ -4,9 +4,9 @@ const apiBase = '/api/recipes';
 async function loadRecipes() {
   try {
     const res = await fetch(apiBase);
-    if (!res.ok) throw new Error('Error loading');
+    if (!res.ok) throw new Error('Fehler beim Laden');
     const recipes = await res.json();
-    const list = document.getElementById('recipe-list');
+    const list = document.getElementById('recipeList');
     list.innerHTML = recipes.map(r => `
       <div class="recipe">
         <h3>${r.title}</h3>
@@ -15,7 +15,7 @@ async function loadRecipes() {
     `).join('');
   } catch (err) {
     console.error(err);
-    document.getElementById('recipe-list').textContent = 'Could not load recipes.';
+    document.getElementById('recipeList').textContent = 'Rezepte konnten nicht geladen werden.';
   }
 }
 
@@ -24,7 +24,14 @@ async function addRecipe(event) {
   event.preventDefault();
   const title = document.getElementById('title').value.trim();
   const instructions = document.getElementById('instructions').value.trim();
-  if (!title || !instructions) return;
+  if (!title) {
+    alert('Bitte gib einen Titel ein.');
+    return;
+  }
+  if (!instructions) {
+    alert('Bitte gib eine Anleitung ein.');
+    return;
+  }
 
   const payload = { title, instructions };
   try {
@@ -33,17 +40,18 @@ async function addRecipe(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    if (!res.ok) throw new Error('Error saving');
+    if (!res.ok) throw new Error('Fehler beim Speichern');
     event.target.reset();
     await loadRecipes();
+    alert('Rezept erfolgreich gespeichert!');
   } catch (err) {
     console.error(err);
-    alert('Saving failed.');
+    alert('Rezept konnte nicht gespeichert werden. Bitte versuche es später erneut.');
   }
 }
 
 // Register event handlers
 document.addEventListener('DOMContentLoaded', () => {
   loadRecipes();
-  document.getElementById('recipe-form').addEventListener('submit', addRecipe);
+  document.getElementById('recipeForm').addEventListener('submit', addRecipe);
 });
