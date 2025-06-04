@@ -1,46 +1,39 @@
 // Script für die Produktverwaltungstabelle
 // Probedatei
-const produkte = [
+const groceries = [
   { gtin: 1234567890123, name: "Tomatensauce", brand: "Hausmarke", category: "Konserven", imageUrl: "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg", amount: 400, unit: "g", drainedAmount: 240, drainedUnit: "g" },
   { gtin: 9876543210123, name: "Mais", brand: "GoldKorn", category: "Konserven", imageUrl: "https://example.com/image2.jpg", amount: 300, unit: "g", drainedAmount: 200, drainedUnit: "g" },
   { gtin: 1112223334445, name: "Haferflocken", brand: "BioFit", category: "Getreide", imageUrl: "https://example.com/image3.jpg", amount: 500, unit: "g", drainedAmount: 0, drainedUnit: "" }
 ];
 
 let sortKey = '', sortAsc = true;
-let gefilterte = [...produkte];
+let groceriesFiltered = [...groceries];
 
 
-// Daten ins Array speichern
-
-const url =  "http://localhost:8080"
-const tabelle = document.getElementById("produkt-tabelle");
-const suche = document.getElementById("suche");
+const url = "http://localhost:8080"
+const table = document.getElementById("produkt-tabelle");
+const search = document.getElementById("suche");
 const anzeige = document.getElementById("anzahl-produkte");
 const kategorieFilter = document.getElementById("kategorie-filter");
 const btnAdd = document.getElementById("btn_add");
 
 
-
-
-
-
-
 // Dashboard aktualisieren - zeigt Anzahl der gefilterten Produkte
 function updateDashboard() {
   // Gesamtanzahl
-  anzeige.textContent = gefilterte.length;
-  
+  anzeige.textContent = groceriesFiltered.length;
+
   // Durchschnittliche Menge berechnen
-  const summen = gefilterte.reduce((acc, p) => acc + (p.amount || 0), 0);
-  const durchschnitt = gefilterte.length ? (summen / gefilterte.length).toFixed(1) : 0;
+  const summen = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
+  const durchschnitt = groceriesFiltered.length ? (summen / groceriesFiltered.length).toFixed(1) : 0;
   document.getElementById("avg-amount").textContent = durchschnitt;
-  
+
   // Kategorien zählen
   const statistik = {};
-  gefilterte.forEach(p => {
+  groceriesFiltered.forEach(p => {
     statistik[p.category] = (statistik[p.category] || 0) + 1;
   });
-  
+
   const ul = document.getElementById("kategorie-statistik");
   ul.innerHTML = '';
   Object.entries(statistik).forEach(([kategorie, anzahl]) => {
@@ -50,9 +43,8 @@ function updateDashboard() {
   });
 }
 
-// Tabelle rendern
 function renderTable(arr) {
-  tabelle.innerHTML = '';
+  table.innerHTML = '';
   arr.forEach((p, idx) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -76,9 +68,9 @@ function renderTable(arr) {
     </div>
     </td>
     `;
-    tabelle.appendChild(tr);
+    table.appendChild(tr);
   });
-  
+
   // Menü für Bearbeiten und Löschen
   document.querySelectorAll('.actions button').forEach(btn => {
     const menu = btn.nextElementSibling;
@@ -89,12 +81,12 @@ function renderTable(arr) {
       });
       menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
     });
-    
+
   });
   document.addEventListener('click', () => {
     document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
   });
-  
+
   // Bearbeit und Lösch Buttons
   document.querySelectorAll('.menu .edit').forEach(btn => {
     btn.addEventListener('click', e => bearbeiten(Number(e.target.dataset.idx)));
@@ -109,7 +101,7 @@ function renderTable(arr) {
 // Daten abrufen und Tabelle rendern
 async function fetchDataAndRender() {
   try {
-    const response = await fetch(url +'/grocery/all'); // URL 
+    const response = await fetch(url + '/grocery/all'); // URL 
     if (!response.ok) {
       throw new Error(`HTTP Fehler: ${response.status}`);
     }
@@ -118,23 +110,21 @@ async function fetchDataAndRender() {
     const newData = Array.isArray(data) ? data : [data];
 
     // 1. produkte ersetzen (oder befüllen) mit den neuen Daten
-    produkte.length = 0;          // altes Array leeren
-    produkte.push(...newData);    // alle neuen Elemente einfügen
+    groceries.length = 0;          // altes Array leeren
+    groceries.push(...newData);    // alle neuen Elemente einfügen
 
     // 2. gefilterte = produkte (frisch gefüllt)
-    gefilterte = [...produkte];
+    groceriesFiltered = [...groceries];
 
     // 3. Tabelle rendern
-    renderTable(gefilterte);
+    renderTable(groceriesFiltered);
   } catch (error) {
     console.error('Fehler beim Abrufen der Daten:', error);
   }
 }
 
-
-// Produkt hinzufügen
-async function addProdukt() {
-  const gtin = Number(document.getElementById("in_gtin").value);
+async function addProduct() {
+  const gtin = document.getElementById("in_gtin").value.trim();
   const name = document.getElementById("in_name").value.trim();
   const brand = document.getElementById("in_brand").value.trim();
   const category = document.getElementById("in_category").value.trim();
@@ -143,18 +133,18 @@ async function addProdukt() {
   const unit = document.getElementById("in_unit").value.trim();
   const drainedAmount = Number(document.getElementById("in_drainedAmt").value);
   const drainedUnit = document.getElementById("in_drainedUnit").value.trim();
-  
+
   // Validierung
-  if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8 
-      || !name || !brand || !category || amount <= 0 || !unit) {
+  if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8
+    || !name || !brand || !category || amount <= 0 || !unit) {
     alert("Bitte gültige Werte eingeben! GTIN muss 8–14-stellig sein. Name, Brand, Kategorie, Amount (>0) und Unit sind Pflichtfelder.");
     return;
   }
-  
+
   // Neues Produkt‐Objekt
-  const neu = { 
-    gtin, name, brand, category, imageUrl, 
-    amount, unit, drainedAmount, drainedUnit 
+  const neu = {
+    gtin, name, brand, category, imageUrl,
+    amount, unit, drainedAmount, drainedUnit
   };
 
   try {
@@ -171,22 +161,22 @@ async function addProdukt() {
     }
 
     // Backend gibt idealerweise das neu angelegte Objekt (oder zumindest den Erfolgsstatus) zurück.
-    const created = await response.json(); 
+    const created = await response.json();
     // (Falls dein Backend nichts zurückschickt, kannst du hier einfach "neu" weiterverwenden.)
 
     // === Lokales Array aktualisieren ===
-    produkte.push(created);   // oder: produkte.push(neu);
-    
+    groceries.push(created);   // oder: produkte.push(neu);
+
     showToast("Produkt erfolgreich hinzugefügt!");
 
     // Kategorie‐Dropdown neu befüllen
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-    fuelleKategorienDropdown();
+    setCategoryDropdown();
 
     // Filter/Suche zurücksetzen und Tabelle neu rendern
-    suche.value = '';
-    gefilterte = [...produkte];
-    sortKey ? sortiereNach(sortKey) : renderTable(gefilterte);
+    search.value = '';
+    groceriesFiltered = [...groceries];
+    sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 
     // Eingabefelder leeren
     document.querySelectorAll('#eingabezeile input').forEach(i => i.value = '');
@@ -197,30 +187,25 @@ async function addProdukt() {
   }
 }
 
-
-
-// Sortierung
-function sortiereNach(key) {
+function sortBy(key) {
   if (sortKey === key) sortAsc = !sortAsc;
   else { sortKey = key; sortAsc = true; }
-  
-  gefilterte.sort((a, b) => {
+
+  groceriesFiltered.sort((a, b) => {
     const va = a[key], vb = b[key];
     if (typeof va === 'number') return sortAsc ? va - vb : vb - va;
     return sortAsc ? String(va).localeCompare(vb) : String(vb).localeCompare(va);
   });
-  
+
   document.querySelectorAll("th").forEach(th => {
     th.classList.remove("sort-asc", "sort-desc");
     if (th.dataset.key === sortKey) th.classList.add(sortAsc ? "sort-asc" : "sort-desc");
   });
-  // Tabelle aktualisieren
-  renderTable(gefilterte);
+  renderTable(groceriesFiltered);
 }
 
-// Kategorien Dropdown füllen
-function fuelleKategorienDropdown() {
-  const kategorien = [...new Set(produkte.map(p => p.category))];
+function setCategoryDropdown() {
+  const kategorien = [...new Set(groceries.map(p => p.category))];
   kategorien.forEach(cat => {
     const opt = document.createElement("option");
     opt.value = cat;
@@ -229,42 +214,38 @@ function fuelleKategorienDropdown() {
   });
 }
 
-// Filtern (Suche + Kategorie) mit Operatoren für amount und drainedAmount evt. 0 ausklammern
-function filtereTabelle(term = suche.value, kategorie = kategorieFilter.value) {
+function filtereTabelle(term = search.value, kategorie = kategorieFilter.value) {
   const t = term.trim().toLowerCase();
-  
-  // Prüfe, ob die Suche mit einem Operator beginnt
   const matchOperator = t.match(/^([<>=])\s*(\d+(\.\d+)?)/);
-  
-  gefilterte = produkte.filter(p => {
+
+  groceriesFiltered = groceries.filter(p => {
     const passtZurKategorie = (kategorie === 'alle' || p.category.toLowerCase() === kategorie.toLowerCase());
-    
+
     if (matchOperator) {
       const operator = matchOperator[1];
       const wert = parseFloat(matchOperator[2]);
-      
-      // Prüfe sowohl amount als auch drainedAmount
+
       const prüfung = val => {
         switch (operator) {
           case '=': return val === wert;
           case '>': return val > wert;
           case '<': return val < wert;
-          default:  return false;
+          default: return false;
         }
       };
-      
+
       return passtZurKategorie && (prüfung(p.amount) || prüfung(p.drainedAmount));
     }
-    
+
     // Standard-Volltextsuche über alle Felder
     const passtZurSuche = Object.values(p)
-    .some(v => String(v).toLowerCase().includes(t));
-    
+      .some(v => String(v).toLowerCase().includes(t));
+
     return passtZurSuche && passtZurKategorie;
   });
-  
+
   // Sortierung oder direktes Rendern
-  sortKey ? sortiereNach(sortKey) : renderTable(gefilterte);
+  sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 }
 /*
 // Filter mit Operatoren nur für amount 
@@ -291,12 +272,12 @@ function filtereTabelle(term = suche.value, kategorie = kategorieFilter.value) {
     return passtZurSuche && passtZurKategorie;
   });
   
-  sortKey ? sortiereNach(sortKey) : renderTable(gefilterte);
+  sortKey ? sortBy(sortKey) : renderTable(gefilterte);
 }*/
 
 // Bearbeiten 
 async function bearbeiten(idx) {
-  const p = gefilterte[idx]; // p ist das geändernde Objekt
+  const p = groceriesFiltered[idx]; // p ist das geändernde Objekt
   // Alte Werte in den Prompts anzeigen, Änderungen reinschreiben lassen
   p.name = prompt("Name:", p.name) ?? p.name;
   p.brand = prompt("Brand:", p.brand) ?? p.brand;
@@ -306,7 +287,7 @@ async function bearbeiten(idx) {
   p.unit = prompt("Unit:", p.unit) ?? p.unit;
   p.drainedAmount = Number(prompt("Drained Amount:", p.drainedAmount)) || p.drainedAmount;
   p.drainedUnit = prompt("Drained Unit:", p.drainedUnit) ?? p.drainedUnit;
-  
+
   // === PUT ans Backend: /grocery/{gtin} ===
   try {
     const response = await fetch(url + `/grocery/${p.gtin}`, {
@@ -321,24 +302,24 @@ async function bearbeiten(idx) {
     }
 
     // Backend sendet idealerweise das aktualisierte Objekt zurück (oder 204 No Content).
-    const updated = await response.json(); 
+    const updated = await response.json();
     // Fallback, falls dein Backend gar nichts zurückgibt: mit p arbeiten.
 
     // === Lokales Array aktualisieren ===
-    const origIdx = produkte.findIndex(x => x.gtin === updated.gtin);
+    const origIdx = groceries.findIndex(x => x.gtin === updated.gtin);
     if (origIdx !== -1) {
-      produkte[origIdx] = updated;
+      groceries[origIdx] = updated;
     } else {
       // Soll nicht passieren, aber zur Sicherheit:
-      produkte.push(updated);
+      groceries.push(updated);
     }
 
     // Wenn Kategorie geändert wurde, Dropdown neu befüllen
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-    fuelleKategorienDropdown();
+    setCategoryDropdown();
 
     // Tabelle neu rendern (unter Berücksichtigung der aktuellen Filter)
-    filtereTabelle(suche.value, kategorieFilter.value);
+    filtereTabelle(search.value, kategorieFilter.value);
     showToast("Produkt erfolgreich bearbeitet!");
 
   } catch (error) {
@@ -350,7 +331,7 @@ async function bearbeiten(idx) {
 
 // Löschen 
 async function loeschen(idx) {
-  const p = gefilterte[idx];
+  const p = groceriesFiltered[idx];
 
   // Optional: Bestätigungsdialog
   if (!confirm(`Produkt "${p.name}" wirklich löschen?`)) return;
@@ -365,15 +346,15 @@ async function loeschen(idx) {
     }
 
     // === Lokales Array aktualisieren ===
-    const origIdx = produkte.findIndex(x => x.gtin === p.gtin);
+    const origIdx = groceries.findIndex(x => x.gtin === p.gtin);
     if (origIdx !== -1) {
-      produkte.splice(origIdx, 1);
+      groceries.splice(origIdx, 1);
     }
 
     // Kategorie‐Dropdown neu befüllen, Tabelle filtern/neu rendern
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
-    fuelleKategorienDropdown();
-    filtereTabelle(suche.value, kategorieFilter.value);
+    setCategoryDropdown();
+    filtereTabelle(search.value, kategorieFilter.value);
 
     showToast("Produkt erfolgreich gelöscht!");
 
@@ -400,10 +381,10 @@ function showToast(message, duration = 3000) {
 function exportCSV() {
   // Kopfzeile definieren
   const header = [
-    'GTIN','Name','Brand','Category','Amount','Unit','DrainedAmount','DrainedUnit'
+    'GTIN', 'Name', 'Brand', 'Category', 'Amount', 'Unit', 'DrainedAmount', 'DrainedUnit'
   ];
   // Datenzeilen generieren
-  const rows = gefilterte.map(p => [
+  const rows = groceriesFiltered.map(p => [
     p.gtin,
     `"${p.name.replace(/"/g, '""')}"`,        // Anführungszeichen in Strings escapen
     `"${p.brand.replace(/"/g, '""')}"`,
@@ -424,7 +405,7 @@ function exportCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'produkte_export.csv';
+  a.download = 'groceries_export.csv';
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -435,22 +416,22 @@ function exportCSV() {
 // Event Listener
 // für Sortiere nach Spaltenüberschrift
 document.querySelectorAll("th[data-key]").forEach(th =>
-  th.addEventListener("click", () => sortiereNach(th.dataset.key))
-  );
-  // für Suchfeld
-  suche.addEventListener("input", () => filtereTabelle(suche.value, kategorieFilter.value));
-  // für Filter Dropdown
-  kategorieFilter.addEventListener("change", () => filtereTabelle(suche.value, kategorieFilter.value));
-  // für Hinzufügen-Button
-  btnAdd.addEventListener("click", addProdukt);
-  // für Export-Button
-  document.getElementById('btn_export')
+  th.addEventListener("click", () => sortBy(th.dataset.key))
+);
+// für Suchfeld
+search.addEventListener("input", () => filtereTabelle(search.value, kategorieFilter.value));
+// für Filter Dropdown
+kategorieFilter.addEventListener("change", () => filtereTabelle(search.value, kategorieFilter.value));
+// für Hinzufügen-Button
+btnAdd.addEventListener("click", addProduct);
+// für Export-Button
+document.getElementById('btn_export')
   .addEventListener('click', exportCSV);
-  
-  // Initialisierung
-  document.addEventListener('DOMContentLoaded', () => {
-    fetchDataAndRender();
-    renderTable(gefilterte);
-    updateDashboard();
-    fuelleKategorienDropdown();
-  });
+
+// Initialisierung
+document.addEventListener('DOMContentLoaded', () => {
+  fetchDataAndRender();
+  renderTable(groceriesFiltered);
+  updateDashboard();
+  setCategoryDropdown();
+});
