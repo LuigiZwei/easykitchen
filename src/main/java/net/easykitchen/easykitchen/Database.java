@@ -39,25 +39,6 @@ public class Database {
         }
     }
 
-    /*(private static void rezepteTabelleErstellen() {
-        String sql ="""
-                    CREATE TABLE IF NOT EXISTS rezepte (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    rezeptname TEXT NOT NULL,
-                    mengenangaben TEXT NOT NULL,
-                    arbeitsbeschreibung TEXT,
-                    arbeitszeit INT NOT NULL);
-                    """;
-
-        try (Connection conn = DriverManager.getConnection(DB_URL);
-                Statement stmt = conn.createStatement()) {
-
-            stmt.execute(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    })*/
-
     private static void deleteTable(String name) {
         String sql = String.format("DROP TABLE IF EXISTS %s;", name);
 
