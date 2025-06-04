@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
   <meta charset="UTF-8">
   <title>Meine Rezepte</title>
   <style>
-    body { font-family: sans-serif; margin: 2rem; }
-    #recipe-list { margin-bottom: 2rem; }
-    .recipe { padding: .5rem; border-bottom: 1px solid #ddd; }
-    form { display: grid; gap: .5rem; max-width: 400px; }
-    input, textarea, button { padding: .5rem; font-size: 1rem; }
+    body {
+      font-family: sans-serif;
+      margin: 2rem;
+    }
+
+    #recipe-list {
+      margin-bottom: 2rem;
+    }
+
+    .recipe {
+      padding: .5rem;
+      border-bottom: 1px solid #ddd;
+    }
+
+    form {
+      display: grid;
+      gap: .5rem;
+      max-width: 400px;
+    }
+
+    input,
+    textarea,
+    button {
+      padding: .5rem;
+      font-size: 1rem;
+    }
   </style>
 </head>
+
 <body>
   <h1>Gespeicherte Rezepte</h1>
   <div id="recipe-list">
@@ -27,4 +50,5 @@
   <script src="mock-backend.js"></script>
   <script src="recipes.js"></script>
 </body>
+
 </html>

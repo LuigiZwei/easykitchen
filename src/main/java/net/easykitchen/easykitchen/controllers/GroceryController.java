@@ -14,7 +14,6 @@ import net.easykitchen.easykitchen.mappers.GroceryMapper;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("/grocery")
 public class GroceryController {
@@ -24,22 +23,25 @@ public class GroceryController {
         this.groceryMapper = groceryMapper;
     }
 
-    /*@GetMapping
-    public GroceryDto groceryDto() {
-        Grocery grocery = new Grocery();
-        return groceryMapper.toDto(grocery);
-    }*/
+    /*
+     * @GetMapping
+     * public GroceryDto groceryDto() {
+     * Grocery grocery = new Grocery();
+     * return groceryMapper.toDto(grocery);
+     * }
+     */
 
     @GetMapping("/all")
     public ResponseEntity<List<Grocery>> getAllGroceries() {
         List<Grocery> groceries = List.of(
-            new Grocery(1, "0000000000000", "Test Grocery 1", "Test Brand 1", "Test Category 1", 
-                         "https://www.matthiasklenk.de/fileadmin/seo-glossar/url-top-level-domain-verzeichnis-pfad.png", 1.0f, "kg", 0.5f, "kg"),
-            new Grocery(2, "0000000000001", "Test Grocery 2", "Test Brand 2", "Test Category 2", 
-                         "https://jurenergie.de/wp-content/uploads/2024/04/Bild1.jpg", 2.0f, "kg", 1.0f, "kg"),
-            new Grocery(3, "0000000000002", "Test Grocery 3", "Test Brand 2", "Test Category 2", 
-                         "https://img.mittelbayerische.de/ezplatform/images/6/1/8/7/331567816-1-ger-DE/b4e272a6d123-29-114158943.jpg", 2.0f, "kg", 1.0f, "kg")
-        );
+                new Grocery(1, "0000000000000", "Test Grocery 1", "Test Brand 1", "Test Category 1",
+                        "https://www.matthiasklenk.de/fileadmin/seo-glossar/url-top-level-domain-verzeichnis-pfad.png",
+                        1.0f, "kg", 0.5f, "kg"),
+                new Grocery(2, "0000000000001", "Test Grocery 2", "Test Brand 2", "Test Category 2",
+                        "https://jurenergie.de/wp-content/uploads/2024/04/Bild1.jpg", 2.0f, "kg", 1.0f, "kg"),
+                new Grocery(3, "0000000000002", "Test Grocery 3", "Test Brand 2", "Test Category 2",
+                        "https://img.mittelbayerische.de/ezplatform/images/6/1/8/7/331567816-1-ger-DE/b4e272a6d123-29-114158943.jpg",
+                        2.0f, "kg", 1.0f, "kg"));
 
         if (groceries == null) {
             return ResponseEntity.notFound().build();
@@ -50,8 +52,8 @@ public class GroceryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<GroceryDto> getGrocery(@PathVariable int id) {
-        Grocery grocery = new Grocery(id, "0000000000000", "Test Grocery", "Test Brand", "Test Category", 
-                                        "https://example.com/image.jpg", 1.0f, "kg", 0.5f, "kg");
+        Grocery grocery = new Grocery(id, "0000000000000", "Test Grocery", "Test Brand", "Test Category",
+                "https://example.com/image.jpg", 1.0f, "kg", 0.5f, "kg");
 
         if (grocery == null) {
             return ResponseEntity.notFound().build();
@@ -62,9 +64,9 @@ public class GroceryController {
 
     @PostMapping("")
     public String postMethodName(@RequestBody String entity) {
-        //TODO: process POST request
-        
+        // TODO: process POST request
+
         return entity;
     }
-    
+
 }
