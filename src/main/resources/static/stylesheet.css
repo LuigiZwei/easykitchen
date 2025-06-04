@@ -1,4 +1,3 @@
-
 body {
   background-color: #f0f0f0;
   font-family: Arial, sans-serif;
@@ -8,7 +7,7 @@ body {
 }
 
 
-.hauptbereich {
+.main {
   background-color: #7e1a1a;
   display: flex;
   border-radius: 10px;
@@ -26,7 +25,7 @@ body {
   box-sizing: border-box;
 }
 
-/* unnötiges element */
+/* unnecessary element */
 .fusszeile {
   background-color: #464646;
   position: absolute;
@@ -42,7 +41,7 @@ body {
   z-index: -10000;
 }
 
-/*.kopfleiste {
+/*.header {
   background-color: #535353;
   display: flex;
   width: 100%;
@@ -53,7 +52,7 @@ body {
   margin:  0px 0px 10px 0px;
   box-shadow: 0px 0px 100px rgb(147, 145, 148);
 } 
-.überschrift {
+.heading {
   width: 400px;
   height: 80px;
   background-color: rgb(13, 88, 29);
@@ -62,18 +61,18 @@ body {
   padding: 10px;
   text-align: center;
 }
- Logo im linken Drittel 
-.kopfleiste .überschrift {
+ Logo in the left third 
+.header .heading {
   flex: 1;
 }
- Navigation in den rechten zwei Dritteln 
-.kopfleiste nav {
+ Navigation in the right two thirds 
+.header nav {
   flex: 2;
   display: flex;
   justify-content: right;
   padding: 10px;
 }
-.kopfleiste nav ul {
+.header nav ul {
   list-style: none;
   display: flex;
   align-items: center;
@@ -81,19 +80,19 @@ body {
   padding: 0px;
   height: 40px;
 }
-.kopfleiste nav ul li a{
+.header nav ul li a{
   color: white;
   text-decoration: none;
   font-weight: bold;
   padding: 0px 10px 0px 10px;
 }
-.kopfleiste nav ul li a:hover {
+.header nav ul li a:hover {
   background-color: #1630a5;
   border-radius: 5px;
   font-size: 30px;
   padding: 0px 10px 0px 10px;
 }*/
-.kopfleiste {
+.header {
   background-color: #535353;
   display: flex;
   flex-wrap: wrap;
@@ -105,7 +104,7 @@ body {
   box-shadow: 0px 0px 100px rgb(147, 145, 148);
   justify-content: space-between;
 }
-.überschrift {
+.heading {
   background-color: rgb(13, 88, 29);
   border-radius: 15px;
   padding: 10px 20px;
@@ -114,24 +113,24 @@ body {
   flex: 1;
   min-width: 250px;
 }
-.überschrift h1 {
+.heading h1 {
   margin: 0;
   font-size: 24px;
 }
-.kopfleiste nav {
+.header nav {
   flex: 2;
   display: flex;
   justify-content: flex-end;
   min-width: 200px;
 }
-.kopfleiste nav ul {
+.header nav ul {
   list-style: none;
   display: flex;
   gap: 20px;
   margin: 0px 0px 0px 0px;
   padding: 0;
 }
-.kopfleiste nav ul li a {
+.header nav ul li a {
   color: white;
   text-decoration: none;
   font-weight: bold;
@@ -140,7 +139,7 @@ body {
   position: relative;
   transition: all 0.3s ease;
 }
-.kopfleiste nav ul li a::after {
+.header nav ul li a::after {
   content: "";
   position: absolute;
   left: 0;
@@ -150,40 +149,40 @@ body {
   background-color: #ffffff;
   transition: width 0.3s ease;
 }
-.kopfleiste nav ul li a:hover::after {
+.header nav ul li a:hover::after {
   width: 100%;
 }
-.kopfleiste nav ul li a:hover {
+.header nav ul li a:hover {
   background-color: #1e40af;
   transform: translateY(-2px);
 }
-.kopfleiste nav ul li a.active {
+.header nav ul li a.active {
   background-color: #1e3a8a;
 }
-/*Design für kleineren Bildschirm */
+/*Design for smaller screens */
 @media (max-width: 768px) {
-  .kopfleiste {
+  .header {
     flex-direction: column;
     align-items: flex-start;
   }
-  .kopfleiste nav {
+  .header nav {
     justify-content: center;
     width: 100%;
     margin-top: 10px;
   }
-  .kopfleiste nav ul {
+  .header nav ul {
     flex-direction: column;
     width: 100%;
     gap: 10px;
   }
-  .kopfleiste nav ul li a {
+  .header nav ul li a {
     display: block;
     width: 100%;
     text-align: center;
   }
 }
 
-/* Dashbord */
+/* Dashboard */
 .dashboard {
   margin: 10px 0px 10px 0px;
   padding: 10px;
@@ -197,11 +196,11 @@ body {
   padding: 0;
 }
 
-/* allgemeines input styling */
+/* general input styling */
 input{
   border: 2px solid #8d8d8d;
 }
-/*suchfeld styling*/
+/*search field styling*/
 input[type="text"], input[type="number"] {
   border-radius: 5px;
   padding: 6px;
@@ -209,7 +208,7 @@ input[type="text"], input[type="number"] {
   margin: 0px 0px 10px 0px;
 }
 
-/* gestylte Produkttabelle */
+/* styled product table */
 .styled-table {
   width: 100%;
   border-collapse: collapse;
@@ -218,27 +217,27 @@ input[type="text"], input[type="number"] {
   font-family: sans-serif;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-/* kopfleiste Tabelle */
+/* table header */
 .styled-table thead tr {
   background-color: #353535;
   color: #ffffff;
   text-align: left;
 }
-/* Zellengröße */
+/* cell size */
 .styled-table th,
 .styled-table td {
   padding: 12px 15px;
   border: 1px solid #dddddd;
 }
-/* ungerade zeilen andere Farbe */
+/* odd rows different color */
 .styled-table tbody tr {
   background-color: #f9f9f9;
 }
-/* gerade zeilen andere Farbe */
+/* even rows different color */
 .styled-table tbody tr:nth-of-type(even) {
   background-color: #f1f1f1;
 }
-/* hover zeilenfarbe */
+/* hover row color */
 .styled-table tbody tr:hover {
   background-color: #e0e0e0;
 }
@@ -252,14 +251,14 @@ button {
   margin: 2px;
   cursor: pointer;
 }
-#eingabezeile {
+#addGrocery {
   margin-bottom: 15px;
   margin-top: 15px;
 }
 
 
 
-/* Aktionen-Menü löschen bearbeiten */
+/* Actions menu delete edit */
 .actions {
   position: relative;
 }
@@ -293,7 +292,7 @@ button {
   background-color: #eee;
 }
 
-/* Toast-Nachricht */
+/* Toast message */
 .toast {
     background-color: #333;
     color: white;
@@ -313,7 +312,7 @@ button {
   gap: 10px;
 }
 
-/* Export-Button */
+/* Export button */
 #btn_export {
   padding: 0.5rem 1rem;
   border: 1px solid #333;

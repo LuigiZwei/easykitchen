@@ -1,5 +1,5 @@
-// Script für die Produktverwaltungstabelle
-// Probedatei
+// Script for the product management table
+// Sample file
 const groceries = [
   { gtin: 1234567890123, name: "Tomatensauce", brand: "Hausmarke", category: "Konserven", imageUrl: "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg", amount: 400, unit: "g", drainedAmount: 240, drainedUnit: "g" },
   { gtin: 9876543210123, name: "Mais", brand: "GoldKorn", category: "Konserven", imageUrl: "https://example.com/image2.jpg", amount: 300, unit: "g", drainedAmount: 200, drainedUnit: "g" },
@@ -22,12 +22,12 @@ const btnAdd = document.getElementById("btn_add");
 function updateDashboard() {
   anzeige.textContent = groceriesFiltered.length;
 
-  // Durchschnittliche Menge berechnen
+  // Calculate average amount
   const summen = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
   const durchschnitt = groceriesFiltered.length ? (summen / groceriesFiltered.length).toFixed(1) : 0;
   document.getElementById("avg-amount").textContent = durchschnitt;
 
-  // Kategorien zählen
+  // Count categories
   const statistik = {};
   groceriesFiltered.forEach(p => {
     statistik[p.category] = (statistik[p.category] || 0) + 1;
@@ -104,14 +104,12 @@ async function fetchDataAndRender() {
       throw new Error(`HTTP error: ${response.status}`);
     }
     const data = await response.json();
-    // Falls die Antwort ein Objekt ist, in ein Array umwandeln
+
     const newData = Array.isArray(data) ? data : [data];
 
-    // 1. produkte ersetzen (oder befüllen) mit den neuen Daten
-    groceries.length = 0;          // altes Array leeren
-    groceries.push(...newData);    // alle neuen Elemente einfügen
+    groceries.length = 0;
+    groceries.push(...newData);
 
-    // 2. gefilterte = produkte (frisch gefüllt)
     groceriesFiltered = [...groceries];
 
     renderTable(groceriesFiltered);
@@ -163,17 +161,17 @@ async function addProduct() {
 
     showToast("Product added successfully!");
 
-    // Kategorie‐Dropdown neu befüllen
+    // Refill category dropdown
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
     setCategoryDropdown();
 
-    // Filter/Suche zurücksetzen und Tabelle neu rendern
+    // Reset filter/search and re-render table
     search.value = '';
     groceriesFiltered = [...groceries];
     sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 
-    // Eingabefelder leeren
-    document.querySelectorAll('#eingabezeile input').forEach(i => i.value = '');
+    // Clear input fields
+    document.querySelectorAll('#addGrocery input').forEach(i => i.value = '');
 
   } catch (error) {
     console.error("Error adding product:", error);
@@ -231,7 +229,7 @@ function filtereTabelle(term = search.value, kategorie = kategorieFilter.value) 
       return passtZurKategorie && (prüfung(p.amount) || prüfung(p.drainedAmount));
     }
 
-    // Standard-Volltextsuche über alle Felder
+    // Default full-text search over all fields
     const passtZurSuche = Object.values(p)
       .some(v => String(v).toLowerCase().includes(t));
 
@@ -275,7 +273,7 @@ async function bearbeiten(idx) {
       groceries.push(updated);
     }
 
-    // Wenn Kategorie geändert wurde, Dropdown neu befüllen
+    // If category was changed, refill dropdown
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
     setCategoryDropdown();
 
@@ -308,7 +306,7 @@ async function loeschen(idx) {
       groceries.splice(origIdx, 1);
     }
 
-    // Kategorie‐Dropdown neu befüllen, Tabelle filtern/neu rendern
+    // Refill category dropdown, filter/re-render table
     kategorieFilter.innerHTML = '<option value="alle">Alle Kategorien</option>';
     setCategoryDropdown();
     filtereTabelle(search.value, kategorieFilter.value);

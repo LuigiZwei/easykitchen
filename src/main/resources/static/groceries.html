@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheet.css">
+    <style>
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="heading">
+            <h1>Das ist eine Überschrift</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href=groceries.html class="active">Startseite</a></li>
+                <li><a href="#page2">Seite 2</a></li>
+                <li><a href="#page3">Seite 3</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="main">
+        <div class="content">
+            <h1>Lebensmittelliste</h1>
+
+            <!-- Search bar -->
+            <label for=suche><strong>Suche:</strong></label>
+            <input type="text" id="suche" placeholder="Suche… (Name, Brand, Category …)" />
+
+            <label for="kategorie-filter"><strong>Filter nach Kategorie:</strong></label>
+            <select id="kategorie-filter">
+                <option value="alle">Alle Kategorien</option>
+            </select>
+
+            <!-- Input row for new product -->
+            <div id="addGrocery">
+                <input type="number" id="in_gtin" placeholder="GTIN" autocomplete="off" />
+                <input type="text" id="in_name" placeholder="Name" autocomplete="off" />
+                <input type="text" id="in_brand" placeholder="Brand" autocomplete="off" />
+                <input type="text" id="in_category" placeholder="Category" autocomplete="off" />
+                <input type="text" id="in_imageUrl" placeholder="Image URL" autocomplete="off" />
+                <input type="number" id="in_amount" placeholder="Amount" autocomplete="off" />
+                <input type="text" id="in_unit" placeholder="Unit" autocomplete="off" />
+                <input type="number" id="in_drainedAmt" placeholder="Drained Amount" autocomplete="off" />
+                <input type="text" id="in_drainedUnit" placeholder="Drained Unit" autocomplete="off" />
+                <button id="btn_add">Hinzufügen</button>
+            </div>
+
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th data-key="gtin">GTIN</th>
+                        <th data-key="name">Name</th>
+                        <th data-key="brand">Brand</th>
+                        <th data-key="category">Category</th>
+                        <th data-key="imageUrl">Image URL</th>
+                        <th data-key="amount">Amount</th>
+                        <th data-key="unit">Unit</th>
+                        <th data-key="drainedAmount">Drained Amount</th>
+                        <th data-key="drainedUnit">Drained Unit</th>
+                        <th>Aktionen</th> <!-- Neue Spalte für Aktionen -->
+                    </tr>
+                </thead>
+                <tbody id="produkt-tabelle">
+                    <!-- Data rows will be inserted here -->
+                </tbody>
+            </table>
+            <div class="dashboard">
+                <p><strong>Gesamtanzahl Lebensmittel:</strong> <span id="anzahl-produkte">0</span></p>
+                <p><strong>Durchschnittliche Menge:</strong> <span id="avg-amount">0</span></p>
+                <strong>Lebensmittel pro Kategorie:</strong>
+                <ul id="kategorie-statistik"></ul>
+            </div>
+            <button id="btn_export">Exportiere CSV</button>
+        </div>
+    </div>
+    <div class="fusszeile">
+        <p>Das ist die Fusszeile</p>
+    </div>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+    <script src="groceries.js"></script>
+</body>
+
+</html>
