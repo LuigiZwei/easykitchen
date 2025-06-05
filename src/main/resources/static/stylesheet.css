@@ -8,7 +8,7 @@ body {
 
 
 .main {
-  background-color: #7e1a1a;
+  background-color: rgb(21, 146, 48);
   display: flex;
   border-radius: 10px;
   text-align: center;
@@ -19,79 +19,12 @@ body {
 .content {
   display: flex;
   flex-direction: column;
-  background-color: #ffeb3b;
+  background-color: #535353;
   padding: 20px;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* unnecessary element */
-.footer {
-  background-color: #464646;
-  position: absolute;
-  background-attachment: fixed;
-  bottom: -1000px;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 100%;
-  height: 100px;
-  border-radius: 10px;
-  text-align: center;
-  padding: 10px;
-  z-index: -10000;
-}
-
-/*.header {
-  background-color: #535353;
-  display: flex;
-  width: 100%;
-  height: 100px;
-  border-radius: 10px;
-  align-items: center;
-  padding: 10px;
-  margin:  0px 0px 10px 0px;
-  box-shadow: 0px 0px 100px rgb(147, 145, 148);
-} 
-.heading {
-  width: 400px;
-  height: 80px;
-  background-color: rgb(13, 88, 29);
-  border-radius: 15px;
-  margin: 0px 10px 0px 0px;
-  padding: 10px;
-  text-align: center;
-}
- Logo in the left third 
-.header .heading {
-  flex: 1;
-}
- Navigation in the right two thirds 
-.header nav {
-  flex: 2;
-  display: flex;
-  justify-content: right;
-  padding: 10px;
-}
-.header nav ul {
-  list-style: none;
-  display: flex;
-  align-items: center;
-  margin: 0;
-  padding: 0px;
-  height: 40px;
-}
-.header nav ul li a{
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  padding: 0px 10px 0px 10px;
-}
-.header nav ul li a:hover {
-  background-color: #1630a5;
-  border-radius: 5px;
-  font-size: 30px;
-  padding: 0px 10px 0px 10px;
-}*/
 .header {
   background-color: #535353;
   display: flex;
@@ -106,13 +39,17 @@ body {
 }
 
 .heading {
-  background-color: rgb(13, 88, 29);
+  background-color: rgb(21, 146, 48);
   border-radius: 15px;
   padding: 10px 20px;
   text-align: center;
   color: white;
   flex: 1;
   min-width: 250px;
+}
+
+h1 {
+  color: #ffffff;
 }
 
 .heading h1 {
@@ -161,47 +98,28 @@ body {
 }
 
 .header nav ul li a:hover {
-  background-color: #1e40af;
+  background-color: rgb(21, 146, 48);
   transform: translateY(-2px);
+
 }
 
 .header nav ul li a.active {
-  background-color: #1e3a8a;
+  background-color: rgb(21, 146, 48);
 }
 
-/*Design for smaller screens */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .header nav {
-    justify-content: center;
-    width: 100%;
-    margin-top: 10px;
-  }
-
-  .header nav ul {
-    flex-direction: column;
-    width: 100%;
-    gap: 10px;
-  }
-
-  .header nav ul li a {
-    display: block;
-    width: 100%;
-    text-align: center;
-  }
+.content label strong {
+  color: white;
 }
 
 /* Dashboard */
 .dashboard {
   margin: 10px 0px 10px 0px;
   padding: 10px;
-  background-color: #f0f8ff;
+  background-color: #ffffff;
   border: 1px solid #ccc;
   border-radius: 6px;
+  /*box-shadow: 10px 10px 8px 10px #09cc23;*/
+
 }
 
 .dashboard #categoryStatistic {
@@ -281,7 +199,6 @@ button {
 
 #addGrocery {
   margin-bottom: 15px;
-  margin-top: 15px;
 }
 
 
