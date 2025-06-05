@@ -106,4 +106,31 @@ public class Database {
         }
         return groceries;
     }
+
+    public static Grocery loadGroceryById(int id) {
+        String sql = "SELECT * FROM groceries WHERE id = ?";
+        try (Connection conn = DriverManager.getConnection(DB_URL);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Grocery g = new Grocery();
+                    g.setId(rs.getInt("id"));
+                    g.setGtin(rs.getString("gtin"));
+                    g.setName(rs.getString("name"));
+                    g.setBrand(rs.getString("brand"));
+                    g.setCategory(rs.getString("category"));
+                    g.setImageUrl(rs.getString("imageUrl"));
+                    g.setAmount(rs.getFloat("amount"));
+                    g.setUnit(rs.getString("unit"));
+                    g.setDrainedAmount(rs.getFloat("drainedAmount"));
+                    g.setDrainedUnit(rs.getString("drainedUnit"));
+                    return g;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

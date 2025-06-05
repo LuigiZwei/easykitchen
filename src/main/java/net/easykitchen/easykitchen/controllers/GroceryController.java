@@ -25,21 +25,21 @@ public class GroceryController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Grocery>> getAllGroceries() {
+    public ResponseEntity<List<GroceryDto>> getAllGroceries() {
         List<Grocery> groceries = Database.loadGroceries();
-
         if (groceries == null) {
             return ResponseEntity.notFound().build();
         } else {
-            return ResponseEntity.ok(groceries);
+            List<GroceryDto> dtos = groceries.stream()
+                .map(groceryMapper::toDto)
+                .toList();
+            return ResponseEntity.ok(dtos);
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<GroceryDto> getGrocery(@PathVariable int id) {
-        Grocery grocery = new Grocery(id, "0000000000000", "Test Grocery", "Test Brand", "Test Category",
-                "https://example.com/image.jpg", 1.0f, "kg", 0.5f, "kg");
-
+        Grocery grocery = Database.loadGroceryById(id); // You need to implement this method
         if (grocery == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -50,13 +50,13 @@ public class GroceryController {
 @PostMapping("/add")
 public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
     Grocery grocery = groceryMapper.toEntity(groceryDto);
-
     Database.addGrocery(
-            grocery.getGtin(), grocery.getName(), grocery.getBrand(),
-            grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
-            grocery.getDrainedAmount(), grocery.getDrainedUnit());
-
-    // Return the added grocery as JSON
+        grocery.getGtin(), grocery.getName(), grocery.getBrand(),
+        grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
+        grocery.getDrainedAmount(), grocery.getDrainedUnit()
+    );
+    // Optionally reload the saved grocery with its ID and return it
+    // Or return the DTO as is
     return ResponseEntity.ok(groceryDto);
 }
 
