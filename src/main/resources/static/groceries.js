@@ -140,7 +140,7 @@ async function addProduct() {
 
   try {
     // POST to backend: /grocery
-    const response = await fetch(url + '/grocery', {
+    const response = await fetch(url + '/grocery/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

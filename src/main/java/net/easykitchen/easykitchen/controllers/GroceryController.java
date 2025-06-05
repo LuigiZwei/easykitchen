@@ -19,23 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 @RequestMapping("/grocery")
 public class GroceryController {
     private final GroceryMapper groceryMapper;
-    private static final Database database = new Database();
 
     public GroceryController(GroceryMapper groceryMapper) {
         this.groceryMapper = groceryMapper;
     }
 
-    /*
-     * @GetMapping
-     * public GroceryDto groceryDto() {
-     * Grocery grocery = new Grocery();
-     * return groceryMapper.toDto(grocery);
-     * }
-     */
-
     @GetMapping("/all")
     public ResponseEntity<List<Grocery>> getAllGroceries() {
-        List<Grocery> groceries = database.loadGroceries();
+        List<Grocery> groceries = Database.loadGroceries();
 
         if (groceries == null) {
             return ResponseEntity.notFound().build();
@@ -56,11 +47,17 @@ public class GroceryController {
         }
     }
 
-    @PostMapping("")
-    public String postMethodName(@RequestBody String entity) {
-        // TODO: process POST request
+@PostMapping("/add")
+public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
+    Grocery grocery = groceryMapper.toEntity(groceryDto);
 
-        return entity;
-    }
+    Database.addGrocery(
+            grocery.getGtin(), grocery.getName(), grocery.getBrand(),
+            grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
+            grocery.getDrainedAmount(), grocery.getDrainedUnit());
+
+    // Return the added grocery as JSON
+    return ResponseEntity.ok(groceryDto);
+}
 
 }
