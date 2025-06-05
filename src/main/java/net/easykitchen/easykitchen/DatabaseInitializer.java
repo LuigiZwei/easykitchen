@@ -10,18 +10,18 @@ public class DatabaseInitializer {
     public void initDatabase() {
         Database.createGroceryTable();
 
-        // Add two sample groceries
-        /*
-         * Database.addGrocery(
-         * "4001234567890", "Tomatensauce", "Hausmarke", "Konserven",
-         * "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg",
-         * 400, "g", 240, "g"
-         * );
-         * Database.addGrocery(
-         * "4009876543210", "Mais", "GoldKorn", "Konserven",
-         * "https://example.com/image2.jpg",
-         * 300, "g", 200, "g"
-         * );
-         */
+        // Only add sample groceries if table is empty
+        if (Database.loadGroceries().isEmpty()) {
+            Database.addGrocery(
+                "4001234567890", "Tomatensauce", "Hausmarke", "Konserven",
+                "https://www.alimentarium.org/sites/default/files/media/image/2016-10/AL001-02%20tomate_0.jpg",
+                400, "g", 240, "g"
+            );
+            Database.addGrocery(
+                "4009876543210", "Mais", "GoldKorn", "Konserven",
+                "https://example.com/image2.jpg",
+                300, "g", 200, "g"
+            );
+        }
     }
 }

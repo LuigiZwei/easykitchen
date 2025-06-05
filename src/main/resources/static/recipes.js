@@ -34,6 +34,8 @@ async function addRecipe(event) {
   }
 
   const payload = { title, instructions };
+  const submitBtn = document.querySelector('#recipeForm button[type="submit"]');
+  submitBtn.disabled = true;
   try {
     const res = await fetch(apiBase, {
       method: 'POST',
@@ -43,11 +45,24 @@ async function addRecipe(event) {
     if (!res.ok) throw new Error('Fehler beim Speichern');
     event.target.reset();
     await loadRecipes();
-    alert('Rezept erfolgreich gespeichert!');
+    showToast('Rezept erfolgreich gespeichert!');
   } catch (err) {
     console.error(err);
     alert('Rezept konnte nicht gespeichert werden. Bitte versuche es später erneut.');
+  } finally {
+    submitBtn.disabled = false;
   }
+}
+
+function showToast(msg, duration = 3000) {
+  let toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 500);
+  }, duration);
 }
 
 // Register event handlers

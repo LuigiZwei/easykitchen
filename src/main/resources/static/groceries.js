@@ -193,6 +193,7 @@ function sortBy(key) {
 }
 
 function setCategoryDropdown() {
+  categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
   const categories = [...new Set(groceries.map(p => p.category))];
   categories.forEach(cat => {
     const opt = document.createElement("option");
@@ -366,7 +367,11 @@ function exportCSV() {
 document.querySelectorAll("th[data-key]").forEach(th =>
   th.addEventListener("click", () => sortBy(th.dataset.key))
 );
-search.addEventListener("input", () => filtereTabelle(search.value, categoryFilter.value));
+let searchTimeout;
+search.addEventListener("input", () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => filtereTabelle(search.value, categoryFilter.value), 300);
+});
 categoryFilter.addEventListener("change", () => filtereTabelle(search.value, categoryFilter.value));
 buttonAddGrocery.addEventListener("click", addProduct);
 document.getElementById('buttonExportCsv')
