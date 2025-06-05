@@ -40,14 +40,15 @@ public class Database {
     }
 
     public static void deleteTable(String name) {
-        String sql = String.format("DROP TABLE IF EXISTS %s;", name);
-
+        // Only allow deletion of the groceries table
+        if (!"groceries".equals(name)) {
+            throw new IllegalArgumentException("Invalid table name");
+        }
+        String sql = "DROP TABLE IF EXISTS groceries;";
         try (Connection conn = DriverManager.getConnection(DB_URL);
-                Statement stmt = conn.createStatement()) {
-
+             Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
             System.out.println("Deleted table: " + name);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -87,17 +88,18 @@ public class Database {
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                Grocery p = new Grocery();
-                p.setGtin(rs.getString("gtin"));
-                p.setName(rs.getString("name"));
-                p.setBrand(rs.getString("brand"));
-                p.setCategory(rs.getString("category"));
-                p.setImageUrl(rs.getString("imageUrl"));
-                p.setAmount(rs.getFloat("amount"));
-                p.setUnit(rs.getString("unit"));
-                p.setDrainedAmount(rs.getFloat("drainedAmount"));
-                p.setDrainedUnit(rs.getString("drainedUnit"));
-                groceries.add(p);
+                Grocery g = new Grocery();
+                g.setId(rs.getInt("id"));
+                g.setGtin(rs.getString("gtin"));
+                g.setName(rs.getString("name"));
+                g.setBrand(rs.getString("brand"));
+                g.setCategory(rs.getString("category"));
+                g.setImageUrl(rs.getString("imageUrl"));
+                g.setAmount(rs.getFloat("amount"));
+                g.setUnit(rs.getString("unit"));
+                g.setDrainedAmount(rs.getFloat("drainedAmount"));
+                g.setDrainedUnit(rs.getString("drainedUnit"));
+                groceries.add(g);
             }
         } catch (Exception e) {
             e.printStackTrace();
