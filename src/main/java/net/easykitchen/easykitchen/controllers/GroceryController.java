@@ -31,8 +31,8 @@ public class GroceryController {
             return ResponseEntity.notFound().build();
         } else {
             List<GroceryDto> dtos = groceries.stream()
-                .map(groceryMapper::toDto)
-                .toList();
+                    .map(groceryMapper::toDto)
+                    .toList();
             return ResponseEntity.ok(dtos);
         }
     }
@@ -47,17 +47,16 @@ public class GroceryController {
         }
     }
 
-@PostMapping("/add")
-public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
-    Grocery grocery = groceryMapper.toEntity(groceryDto);
-    Database.addGrocery(
-        grocery.getGtin(), grocery.getName(), grocery.getBrand(),
-        grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
-        grocery.getDrainedAmount(), grocery.getDrainedUnit()
-    );
-    // Optionally reload the saved grocery with its ID and return it
-    // Or return the DTO as is
-    return ResponseEntity.ok(groceryDto);
-}
+    @PostMapping("/add")
+    public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
+        Grocery grocery = groceryMapper.toEntity(groceryDto);
+        Database.addGrocery(
+                grocery.getGtin(), grocery.getName(), grocery.getBrand(),
+                grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
+                grocery.getDrainedAmount(), grocery.getDrainedUnit());
+        // Optionally reload the saved grocery with its ID and return it
+        // Or return the DTO as is
+        return ResponseEntity.ok(groceryDto);
+    }
 
 }

@@ -1,53 +1,208 @@
 <!DOCTYPE html>
 <html lang="de">
-
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Meine Rezepte</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 2rem;
-    }
-
-    #recipeList {
-      margin-bottom: 2rem;
-    }
-
-    .recipe {
-      padding: .5rem;
-      border-bottom: 1px solid #ddd;
-    }
-
-    form {
-      display: grid;
-      gap: .5rem;
-      max-width: 400px;
-    }
-
-    input,
-    textarea,
-    button {
-      padding: .5rem;
-      font-size: 1rem;
-    }
-  </style>
+  <link rel="stylesheet" href="recipes.css" />
 </head>
-
 <body>
-  <h1>Gespeicherte Rezepte</h1>
-  <div id="recipeList">
-    <!-- Recipes will be displayed here -->
-  </div>
+  <!-- Sticky Header mit Such- und Filterleiste -->
+  <header class="sticky-header">
+    <h1>Gespeicherte Rezepte</h1>
+    <div class="controls">
+      <input type="text" id="search-input" placeholder="Nach Titel suchen…" />
 
-  <h2>Neues Rezept hinzufügen</h2>
-  <form id="recipeForm">
-    <input type="text" id="title" placeholder="Titel" required />
-    <textarea id="instructions" placeholder="Anleitung" rows="4" required></textarea>
-    <button type="submit">Speichern</button>
-  </form>
+      <select id="sort-select">
+        <option value="title-asc">Titel ↑</option>
+        <option value="title-desc">Titel ↓</option>
+        <option value="date-asc">Datum ↑</option>
+        <option value="date-desc">Datum ↓</option>
+      </select>
 
+      <!-- Checkbox „Nur Favoriten“ -->
+      <label class="favorites-filter">
+        <input type="checkbox" id="favorites-only"/>
+        Nur Favoriten
+      </label>
+
+      <div id="tag-filters"></div>
+    </div>
+  </header>
+
+  <main>
+    <div id="loading" hidden>Lade Rezepte…</div>
+    <ul id="recipe-list" aria-live="polite"></ul>
+    <p id="load-error" class="error" role="alert" hidden>Konnte Rezepte nicht laden.</p>
+
+    <h2 id="form-title">Neues Rezept hinzufügen</h2>
+    <form id="recipe-form">
+      <label for="title">Titel:</label>
+      <input type="text" id="title" placeholder="Titel" required />
+
+      <label for="instructions">Anleitung:</label>
+      <textarea id="instructions" placeholder="Anleitung" rows="3" required></textarea>
+
+      <label for="tags-input">Tags (Komma-getrennt):</label>
+      <!-- Datalist für smarte Tag-Vorschläge -->
+      <input type="text" id="tags-input" placeholder="z. B. Vegetarisch, Schnell" list="tags-list" />
+      <datalist id="tags-list"></datalist>
+
+      <label for="image-input">Bild hochladen:</label>
+      <input type="file" id="image-input" accept="image/*" />
+
+      <!-- Dynamische Zutatenliste -->
+      <fieldset id="ingredients-fieldset">
+        <legend>Zutaten</legend>
+        <div class="ingredient-row">
+          <input type="text" class="ingredient-name" placeholder="Name" required/>
+          <input type="text" class="ingredient-amount" placeholder="Menge" required/>
+          <button type="button" class="remove-ingredient" title="Diese Zutat entfernen">✖</button>
+        </div>
+        <button type="button" id="add-ingredient">Weitere Zutat hinzufügen</button>
+      </fieldset>
+
+      <button type="submit" id="submit-button">Speichern</button>
+      <button type="button" id="cancel-edit" hidden>Abbrechen</button>
+      <p id="form-error" class="error" role="alert" hidden></p>
+    </form>
+
+    <!-- Wochenplan-Abschnitt -->
+    <h2>Wochenplan</h2>
+    <div id="weekly-planner">
+      <div class="day-slot" data-day="Montag">
+        <h3>Montag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Dienstag">
+        <h3>Dienstag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Mittwoch">
+        <h3>Mittwoch</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Donnerstag">
+        <h3>Donnerstag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Freitag">
+        <h3>Freitag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Samstag">
+        <h3>Samstag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+      <div class="day-slot" data-day="Sonntag">
+        <h3>Sonntag</h3>
+        <ul class="plan-list"></ul>
+      </div>
+    </div>
+
+    <button id="generate-list">Einkaufsliste generieren</button>
+    <div id="shopping-list" hidden>
+      <h2>Einkaufsliste</h2>
+      <ul id="shopping-items"></ul>
+    </div>
+  </main>
+
+  <!-- Scroll-to-Top Button -->
+  <button id="scroll-top" aria-label="Nach oben scrollen">↑</button>
+
+  <!-- Sticky Footer -->
+  <footer class="sticky-footer">
+    <p>© 2025 Meine Rezepte   |   <a href="#">Kontakt</a>   |   <a href="#">Impressum</a></p>
+  </footer>
+
+  <script src="mock-backend.js"></script>
   <script src="recipes.js"></script>
 </body>
-
 </html>
+
+
+
+
+
+<!-- Zusätzliche Funktionen
+Dark Mode / Light Mode
+– Umschalter, der per CSS-Variable („--bg-color“, „--text-color“) zwischen hellem und dunklem Farbschema wechselt.
+– Speichere die Wahl im localStorage, sodass die Einstellung beim nächsten Besuch erhalten bleibt.
+
+User-Accounts / Login
+– Ermögliche mehrere Nutzer:innen, ihre eigenen Rezepte zu speichern.
+– Jeder sieht dann nur seine Rezepte (Backend: Endpunkt „GET /api/recipes?userId=…“).
+– Fügt Sicherheits-Aspekt hinzu und persönliche Favoriten.
+
+Kommentarfunktion / Bewertungen
+– Jedes Rezept kann mit 1–5 Sternen bewertet werden und eine kurze Textbewertung haben.
+– Durchschnittsbewertung am Rezept anzeigen. (Mock: speichere einfach ein Array reviews: [{ user: 'Max', rating: 4, comment: 'Lecker!' }, …].)
+
+Saisonale oder thematische Filter
+– Etikettiere Rezepte mit „Sommer“, „Winter“, „Weihnachten“, „Ostern“ etc.
+– Biete Dropdown oder Checkboxen, um nur Rezepte dieser Kategorie auszuwählen.
+
+Rezept-Teilen via URL/QR-Code
+– Generiere für jedes Rezept einen Kurzlink (/recipe/12345), sodass andere es betrachten können.
+– QR-Code für schnelles Teilen (z. B. mit einer kleinen JS-QR-Bibliothek).
+
+Infinite Scroll / Pagination
+– Wenn hunderte Rezepte existieren, lade sie in kleinen Chargen (z. B. 20 pro Seite) und biete „Mehr laden“-Button oder endloses Scrollen.
+
+Offline-Unterstützung (Progressive Web App)
+– Implementiere einen Service Worker, um Rezepte (und Bilder) im Cache zu halten.
+– Nutzer können auch offline Rezepte anzeigen und neue erfassen, später wird synchronisiert.
+
+Rezept-Statistiken / Dashboard erweitern
+– Zeige Balkendiagramme mit Top-Tags oder häufigsten Zutaten.
+– Anzahl der Rezepte pro Monat, am häufigsten gekochte Kategorien etc.
+
+Mehrsprachigkeit / Localization
+– Baue alle Texte so auf, dass du sie später leicht übersetzen kannst („i18n“-Pattern).
+– Alternative Sprachen (Deutsch/Englisch) per Umschalter anbieten.
+
+
+Zusätzliche Style-Elemente
+Karten-basiertes Layout
+– Statt einfacher Listenpunkte jedes Rezept in einer Card mit Schatten und abgerundeten Ecken präsentieren.
+– Auf Hover hebt sich die Card leicht ab (z. B. transform: translateY(-4px)).
+
+CSS-Variablen und Theming
+– Definiere Farben, Abstände, Schriftgrößen als --primary-color, --spacing-md etc.
+– Erleichtert späteres Anpassen und Dark/Light-Mode.
+
+Feinere Hover/Focus-Effekte
+– Alle Buttons und Links leicht vergrößern oder farblich hervorheben, wenn man mit Tab-Fokus draufspringt (Barrierefreiheit).
+– Nutze :focus-visible für Keyboard-User deutlich sichtbares Outline.
+
+Smooth Transitions & Animationen
+– Wenn ein neues Rezept hinzukommt oder gelöscht wird, fade-in / fade-out Animation.
+– Z. B. mit CSS @keyframes oder kleinen JS-Klassen („.fade-in“, „.fade-out“).
+
+Responsive Grid für Rezepte
+– Auf größeren Bildschirmen mehrere Spalten (CSS Grid oder Flexbox).
+– Auf Mobil nur eine Spalte, auf Tablet zwei, auf Desktop drei Karten nebeneinander.
+
+Typografie und Icon-Fonts
+– Verwende eine Google Font (z. B. „Roboto“), um moderner zu wirken.
+– Für Icons (Stern, Papierkorb, Drucker) kann FontAwesome oder eine kleine SVG-Sprite helfen.
+
+Scroll-to-Top-Button
+– Wenn die Liste sehr lang wird, unten rechts erscheint beim Scrollen ein „↑“-Button, der sanft zurück nach oben scrollt.
+
+Kontraststarke Farben für Barrierefreiheit
+– Achte darauf, dass Texte und Buttons stets den Kontrast‐Richtlinien (WCAG) genügen.
+– Verwende z. B. color: #333; background: #fff; statt blasses Grau auf Weiß.
+
+Parallax- oder Hintergrund-Pattern
+– Ein dezentes, sich wiederholendes Hintergrundmuster oder leicht animierte SVG-Wellen für den Seitenhintergrund.
+
+Sticky Header / Footer
+– Header mit Such- und Filterleiste bleibt am oberen Rand kleben, wenn man runterscrollt.
+– Footer mit Urheberrecht oder kurzen Links „Kontakt“, „Impressum“ immer sichtbar.
+
+Visuelles Feedback für Drag & Drop
+– Wenn du den Wochenplan oder die Einkaufsliste per Drag & Drop implementierst, hebt sich die Drop-Zone farblich hervor.
+
+Progress Bar bei langem Ladevorgang
+– Falls das Laden von hunderten Rezepten eine Weile dauert, zeige oben eine schmale blaugefüllte Progress-Bar, die synchron zu loadRecipes() läuft.-->
