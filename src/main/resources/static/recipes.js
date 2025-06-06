@@ -2,12 +2,12 @@
   const apiBase = '/api/recipes';
   let editingId = null;
   let allRecipes = [];
-  // Wochenplan: für jeden Tag eine Liste von Rezept-IDs
+  // Weekly plan: for each day a list of recipe IDs
   let weeklyPlan = {
     Montag: [], Dienstag: [], Mittwoch: [], Donnerstag: [], Freitag: [], Samstag: [], Sonntag: []
   };
 
-  /*** apiFetch: prüft auf 204 und Content-Type, bevor res.json() ***/
+  // apiFetch: checks for 204 and Content-Type before res.json()
   async function apiFetch(url, options = {}) {
     try {
       const res = await fetch(url, options);
@@ -24,7 +24,7 @@
     }
   }
 
-  /*** Rendert Checkboxen für alle vorhandenen Tags und füllt Datalist ***/
+  // Renders checkboxes for all available tags and fills datalist
   function renderTagFilters() {
     const container = document.getElementById('tag-filters');
     container.innerHTML = '';
@@ -44,7 +44,7 @@
       container.appendChild(wrapper);
     });
 
-    // Datalist im Formular füllen (smarte Tag-Vorschläge)
+    // Fill datalist in form (smart tag suggestions)
     const datalist = document.getElementById('tags-list');
     datalist.innerHTML = '';
     Array.from(uniqueTags).forEach(tag => {
@@ -59,10 +59,10 @@
       .map(cb => cb.value);
   }
 
-  /*** Rendert die Liste aller Rezepte als Karten ***/
+  // Renders the list of all recipes as cards
   function renderRecipes(recipes) {
     const list = document.getElementById('recipe-list');
-    // Fade-out-Trick: Liste kurz ausblenden, neu füllen, wieder einblenden
+    // Fade-out trick: hide list, refill, show again
     list.style.opacity = '0';
     setTimeout(() => {
       list.innerHTML = '';
@@ -73,7 +73,7 @@
         li.draggable = true;
         li.dataset.id = r.id;
 
-        // Dragstart / Dragend für Rezepte
+        // Dragstart / Dragend for recipes
         li.addEventListener('dragstart', (e) => {
           e.dataTransfer.setData('text/plain', r.id);
           li.classList.add('dragging');
@@ -82,7 +82,7 @@
           li.classList.remove('dragging');
         });
 
-        // Thumbnail (falls vorhanden)
+        // Thumbnail (if available)
         if (r.image) {
           const img = document.createElement('img');
           img.src = r.image;
@@ -91,18 +91,18 @@
           li.appendChild(img);
         }
 
-        // Favoriten-Stern
+        // Favorite star
         const favToggle = document.createElement('span');
         favToggle.classList.add('favorite-toggle');
         favToggle.innerHTML = r.isFavorite ? '★' : '☆';
         favToggle.dataset.id = r.id;
         li.appendChild(favToggle);
 
-        // Body: Titel, Tags, Zutaten, Anleitung, Buttons
+        // Body: title, tags, ingredients, instructions, buttons
         const bodyDiv = document.createElement('div');
         bodyDiv.classList.add('recipe-body');
 
-        // Header (Titel + Buttons)
+        // Header (title + buttons)
         const headerDiv = document.createElement('div');
         headerDiv.classList.add('recipe-header');
         const h3 = document.createElement('h3');
@@ -133,7 +133,7 @@
         headerDiv.appendChild(buttonContainer);
         bodyDiv.appendChild(headerDiv);
 
-        // Erstellungsdatum
+        // Creation date
         if (r.createdAt) {
           const dateP = document.createElement('p');
           const date = new Date(r.createdAt);
@@ -156,7 +156,7 @@
           bodyDiv.appendChild(tagsDiv);
         }
 
-        // Zutatenliste
+        // Ingredients list
         if (Array.isArray(r.ingredients) && r.ingredients.length) {
           const ulIngr = document.createElement('ul');
           ulIngr.style.marginTop = '0.5rem';
@@ -169,7 +169,7 @@
           bodyDiv.appendChild(ulIngr);
         }
 
-        // Anleitungstext
+        // Instructions text
         const p = document.createElement('p');
         p.textContent = r.instructions;
         bodyDiv.appendChild(p);
@@ -178,12 +178,12 @@
         list.appendChild(li);
       });
 
-      // Nach Einfügen wieder einblenden
+      // Show list again after inserting
       list.style.opacity = '1';
     }, 150);
   }
 
-  /*** Lädt Rezepte und initialisiert Tag-Filter, Liste und Drag&Drop ***/
+  // Loads recipes and initializes tag filter, list and drag&drop
   async function loadRecipes() {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('load-error');
@@ -202,11 +202,11 @@
     }
   }
 
-  /*** Wendet Suche, Tag-Filter, Favoriten-Filter & Sortierung an, ruft renderRecipes auf ***/
+  // Applies search, tag filter, favorite filter & sorting, then calls renderRecipes
   function applyFiltersAndRender() {
     let filtered = [...allRecipes];
 
-    // 1. Suche nach Titel oder Text (kombiniert)
+    // Search by title or text (combined)
     const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
     if (searchTerm) {
       filtered = filtered.filter(r => {
@@ -217,7 +217,7 @@
       });
     }
 
-    // 2. Tag-Filter
+    // Tag filter
     const selectedTags = getSelectedTags();
     if (selectedTags.length) {
       filtered = filtered.filter(r => {
@@ -225,13 +225,13 @@
       });
     }
 
-    // 3. Favoriten-Filter
+    // Favorite filter
     const favCheckbox = document.getElementById('favorites-only');
     if (favCheckbox.checked) {
       filtered = filtered.filter(r => r.isFavorite);
     }
 
-    // 4. Sortierung
+    // Sorting
     const sortVal = document.getElementById('sort-select').value;
     switch (sortVal) {
       case 'title-asc':
@@ -253,7 +253,7 @@
     renderRecipes(filtered);
   }
 
-  /*** Formular zurücksetzen ***/
+  // Reset form
   function resetForm() {
     editingId = null;
     document.getElementById('form-title').textContent = 'Neues Rezept hinzufügen';
@@ -266,7 +266,7 @@
     document.getElementById('recipe-form').reset();
     addIngredientRow();
 
-    // Unmittelbare Aktualisierung der Tag-Datalist nach Zurücksetzen
+    // Immediate update of tag datalist after reset
     renderTagFilters();
   }
 
@@ -313,7 +313,7 @@
       .filter(s => s.length > 0);
   }
 
-  /*** Liest Datei als Base64 (für Bild-Upload) ***/
+  // Reads file as Base64 (for image upload)
   function readFileAsBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -323,7 +323,7 @@
     });
   }
 
-  /*** Formular‐Submit: POST oder PUT, inkl. Base64-Bild ***/
+  // Form submit: POST or PUT, including Base64 image
   async function handleFormSubmit(event) {
     event.preventDefault();
     const titleInput = document.getElementById('title');
@@ -343,7 +343,7 @@
       return;
     }
 
-    // Zutaten auslesen
+    // Read ingredients
     const rows = Array.from(document.querySelectorAll('.ingredient-row'));
     const ingredients = [];
     for (const row of rows) {
@@ -357,7 +357,7 @@
       ingredients.push({ name, amount });
     }
 
-    // Bild in Base64 konvertieren
+    // Convert image to Base64
     let imageData = null;
     if (imageInput.files && imageInput.files[0]) {
       imageData = await readFileAsBase64(imageInput.files[0]);
@@ -387,7 +387,7 @@
     }
   }
 
-  /*** Öffnet neues Fenster, um Rezept zu drucken ***/
+  // Opens a new window to print a recipe
   function printRecipe(id) {
     const recipe = allRecipes.find(r => r.id === id);
     if (!recipe) return;
@@ -430,7 +430,7 @@
     w.document.close();
   }
 
-  /*** Entfernt Rezept-ID aus allen Tagen ***/
+  // Removes recipe ID from all days
   function removeFromAllDays(recipeId) {
     for (const day of Object.keys(weeklyPlan)) {
       const idx = weeklyPlan[day].indexOf(recipeId);
@@ -440,7 +440,7 @@
     }
   }
 
-  /*** Rendert den aktuellen Wochenplan in die Day-Slots ***/
+  // Renders the current weekly plan in the day slots
   function renderWeeklyPlan() {
     for (const [day, arr] of Object.entries(weeklyPlan)) {
       const slotList = document.querySelector(`.day-slot[data-day="${day}"] .plan-list`);
@@ -452,7 +452,7 @@
           li.textContent = recipe.title;
           li.draggable = true;
           li.dataset.id = recipe.id;
-          // Dragstart und Dragend für Wochenplan-Items
+          // Dragstart and dragend for weekly plan items
           li.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', recipe.id);
             li.classList.add('dragging');
@@ -466,9 +466,9 @@
     }
   }
 
-  /*** Initialisiert Drag & Drop für Wochenplan-Slots und Rezept-Liste ***/
+  // Initializes drag & drop for weekly plan slots and recipe list
   function initDragAndDropSlots() {
-    // Drop-Handler für Tages-Slots
+    // Drop handler for day slots
     const slots = document.querySelectorAll('.day-slot');
     slots.forEach(slot => {
       slot.addEventListener('dragover', (e) => {
@@ -493,7 +493,7 @@
       });
     });
 
-    // Drop-Handler für Rezeptliste (Entfernen aus Wochenplan)
+    // Drop handler for recipe list (remove from weekly plan)
     const recipeList = document.getElementById('recipe-list');
     recipeList.addEventListener('dragover', (e) => {
       e.preventDefault();
@@ -513,7 +513,7 @@
     });
   }
 
-  /*** Generiert Einkaufsliste aus allen geplanten Zutaten ***/
+  // Generates shopping list from all planned ingredients
   function generateShoppingList() {
     const combined = {};
     Object.values(weeklyPlan).forEach(arr => {
@@ -550,7 +550,7 @@
     document.getElementById('shopping-list').hidden = false;
   }
 
-  /*** Scroll-to-Top Button anzeigen/sounden: ***/
+  // Show/hide scroll-to-top button
   function initScrollTopButton() {
     const scrollBtn = document.getElementById('scroll-top');
     window.addEventListener('scroll', () => {
@@ -565,9 +565,9 @@
     });
   }
 
-  /*** Event-Listener für Klicken auf Buttons und Interaktionen ***/
+  // Event listeners for button clicks and interactions
   document.getElementById('recipe-list').addEventListener('click', async (e) => {
-    // Löschen
+    // Delete
     if (e.target.matches('.delete-btn')) {
       const id = e.target.dataset.id;
       try {
@@ -579,7 +579,7 @@
       return;
     }
 
-    // Bearbeiten
+    // Edit
     if (e.target.matches('.edit-btn')) {
       const id = e.target.dataset.id;
       try {
@@ -600,7 +600,7 @@
       return;
     }
 
-    // Favoriten toggle
+    // Toggle favorite
     if (e.target.matches('.favorite-toggle')) {
       const id = e.target.dataset.id;
       const recipe = allRecipes.find(r => r.id === id);
@@ -619,7 +619,7 @@
       return;
     }
 
-    // Drucken
+    // Print
     if (e.target.matches('.print-btn')) {
       const id = e.target.dataset.id;
       printRecipe(id);
@@ -627,7 +627,7 @@
     }
   });
 
-  // Hinzufügen/Entfernen von Zutatenzeilen
+  // Add/remove ingredient rows
   document.getElementById('add-ingredient').addEventListener('click', () => {
     addIngredientRow();
   });
@@ -638,17 +638,17 @@
     }
   });
 
-  // Suche, Sortierung, Tag-Filter, Favoriten-Filter
+  // Search, sorting, tag filter, favorite filter
   document.getElementById('search-input').addEventListener('input', applyFiltersAndRender);
   document.getElementById('sort-select').addEventListener('change', applyFiltersAndRender);
   document.getElementById('tag-filters').addEventListener('change', applyFiltersAndRender);
   document.getElementById('favorites-only').addEventListener('change', applyFiltersAndRender);
 
-  // Formular-Events
+  // Form events
   document.getElementById('cancel-edit').addEventListener('click', resetForm);
   document.getElementById('recipe-form').addEventListener('submit', handleFormSubmit);
 
-  // Einkaufsliste
+  // Shopping list
   document.getElementById('generate-list').addEventListener('click', generateShoppingList);
 
   document.addEventListener('DOMContentLoaded', () => {

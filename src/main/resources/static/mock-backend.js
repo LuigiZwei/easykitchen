@@ -1,5 +1,5 @@
 (() => {
-  // In-Memory-Datenbank mit id, title, instructions, ingredients, tags, image, createdAt, isFavorite
+  // In-memory database with id, title, instructions, ingredients, tags, image, createdAt, isFavorite
   let recipes = [
     {
       id: '1',
@@ -39,7 +39,7 @@
   window.fetch = async (input, init = {}) => {
     const url = typeof input === 'string' ? input : input.url;
     const parsed = new URL(url, location.href);
-    const path = parsed.pathname;              // z.B. "/api/recipes" oder "/api/recipes/1"
+    const path = parsed.pathname;              // e.g. "/api/recipes" or "/api/recipes/1"
     const method = (init.method || 'GET').toUpperCase();
     const body = init.body ? JSON.parse(init.body) : null;
 
@@ -47,7 +47,7 @@
       return _fetch(input, init);
     }
 
-    await new Promise(res => setTimeout(res, 200)); // simulierte Latenz
+    await new Promise(res => setTimeout(res, 200)); // simulated latency
 
     // GET /api/recipes
     if (path === '/api/recipes' && method === 'GET') {

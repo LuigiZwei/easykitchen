@@ -1,5 +1,5 @@
 /* ===============================
-   1) Globale Basis-Styles & Variablen
+   1) Global base styles & variables
    =============================== */
 :root {
   --card-bg: #ffffff;
@@ -24,21 +24,21 @@ body {
 }
 
 main {
-  margin-top: 140px; /* Höhe des Sticky-Header, anpassen falls nötig */
+  margin-top: 140px; /* Height of sticky header, adjust if needed */
   padding: 1rem 2rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* Smooth Fade-In für Karten beim Einfügen */
+/* Smooth fade-in for cards when inserted */
 @keyframes fadeInCard {
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ===============================
-   2) Sticky Header / Footer
+   2) Sticky header / footer
    =============================== */
 .sticky-header {
   position: sticky;
@@ -78,7 +78,7 @@ main {
 }
 
 /* ===============================
-   3) Controls (Suchfeld, Sortierung, Favoriten, Tag-Filter)
+   3) Controls (search field, sorting, favorites, tag filter)
    =============================== */
 .controls {
   display: flex;
@@ -110,7 +110,7 @@ main {
   outline: 2px solid var(--focus-color);
 }
 
-/* Favoriten-Filter (Checkbox) */
+/* Favorites filter (checkbox) */
 .favorites-filter {
   display: flex;
   align-items: center;
@@ -149,7 +149,7 @@ main {
 }
 
 /* ===============================
-   4) Rezepte-Liste als Karten-Layout
+   4) Recipe list as card layout
    =============================== */
 #recipe-list {
   display: grid;
@@ -160,7 +160,7 @@ main {
   margin-bottom: 2rem;
 }
 
-/* Einzelne Karte für jedes Rezept */
+/* Single card for each recipe */
 .recipe {
   background-color: var(--card-bg);
   border: 1px solid var(--card-border);
@@ -179,7 +179,7 @@ main {
   box-shadow: 0 4px 10px var(--card-shadow);
 }
 
-/* Thumbnail des Rezeptbildes */
+/* Recipe image thumbnail */
 .recipe img.thumbnail {
   width: 100%;
   height: 160px;
@@ -188,7 +188,7 @@ main {
   margin-bottom: 0.75rem;
 }
 
-/* Favoriten-Stern */
+/* Favorite star */
 .recipe .favorite-toggle {
   position: absolute;
   top: 0.75rem;
@@ -208,7 +208,7 @@ main {
   color: gold;
 }
 
-/* Body: Titel, Tags, Zutaten, Anleitung, Buttons */
+/* Body: title, tags, ingredients, instructions, buttons */
 .recipe-body {
   display: flex;
   flex-direction: column;
@@ -255,14 +255,14 @@ main {
   outline: 2px solid var(--focus-color);
 }
 
-/* Erstellungsdatum */
+/* Creation date */
 .recipe-body p {
   margin: 0;
   font-size: 0.85rem;
   color: #555;
 }
 
-/* Tags-Liste unter jedem Rezept */
+/* Tags list under each recipe */
 .tags-list {
   display: flex;
   gap: 0.5rem;
@@ -281,7 +281,7 @@ main {
   transform: scale(1.05);
 }
 
-/* Zutatenliste */
+/* Ingredients list */
 .recipe-body ul {
   margin: 0;
   padding-left: 1.25rem;
@@ -292,14 +292,14 @@ main {
   font-size: 0.9rem;
 }
 
-/* Anleitungstext */
+/* Instructions text */
 .recipe-body > p:last-child {
   margin-top: 0.5rem;
   flex: 1;
 }
 
 /* ===============================
-   5) Formular-Styles mit Fokus-Effekten
+   5) Form styles with focus effects
    =============================== */
 form {
   display: flex;
@@ -357,7 +357,7 @@ button:focus-visible {
   outline: 2px solid var(--focus-color);
 }
 
-/* Zutaten-Listen im Formular */
+/* Ingredients list in form */
 fieldset#ingredients-fieldset {
   border: 1px solid #ccc;
   padding: 0.5rem;
@@ -408,7 +408,7 @@ fieldset#ingredients-fieldset:hover {
 }
 
 /* ===============================
-   6) Wochenplan-Layout
+   6) Weekly planner layout
    =============================== */
 #weekly-planner {
   display: grid;
@@ -462,7 +462,7 @@ fieldset#ingredients-fieldset:hover {
 }
 
 /* ===============================
-   7) Einkaufsliste
+   7) Shopping list
    =============================== */
 #shopping-list {
   margin-top: 1rem;
@@ -479,7 +479,7 @@ fieldset#ingredients-fieldset:hover {
 }
 
 /* ===============================
-   8) Scroll-to-Top Button
+   8) Scroll-to-top button
    =============================== */
 #scroll-top {
   position: fixed;
@@ -510,7 +510,7 @@ fieldset#ingredients-fieldset:hover {
 }
 
 /* ===============================
-   9) Fehlermeldungen & Laden
+   9) Error messages & loading
    =============================== */
 .error {
   color: red;
@@ -523,14 +523,14 @@ fieldset#ingredients-fieldset:hover {
 }
 
 /* ===============================
-  10) Recipe-Liste Drag-Over-Effekt
+  10) Recipe list drag-over effect
    =============================== */
 #recipe-list.drag-over-recipe-list {
-  background-color: #ffe0e0; /* Heller Rot-Ton */
+  background-color: #ffe0e0;
 }
 
 /* ===============================
-  11) .dragging für Transparenz
+  11) .dragging for transparency
    =============================== */
 .dragging {
   opacity: 0.5;

@@ -1,10 +1,8 @@
 // Script for the grocery management table
-// Sample file
-const groceries = [];
+const groceries = []; // Full array of all fetched grocery objects
 
 let sortKey = '', sortAsc = true;
 let groceriesFiltered = [...groceries];
-
 
 const url = "http://localhost:8080"
 const table = document.getElementById("groceryTable");
@@ -13,22 +11,16 @@ const display = document.getElementById("groceryCount");
 const categoryFilter = document.getElementById("categoryFilter");
 const buttonAddGrocery = document.getElementById("buttonAddGrocery");
 
-
 // Update dashboard with filtered grocery count
 function updateDashboard() {
   display.textContent = groceriesFiltered.length;
-
-  // Calculate average amount
   const sum = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
   const average = groceriesFiltered.length ? (sum / groceriesFiltered.length).toFixed(1) : 0;
   document.getElementById("groceryAverageAmount").textContent = average;
-
-  // Count categories
   const statistic = {};
   groceriesFiltered.forEach(p => {
     statistic[p.category] = (statistic[p.category] || 0) + 1;
   });
-
   const ul = document.getElementById("categoryStatistic");
   ul.innerHTML = '';
   Object.entries(statistic).forEach(([category, count]) => {
@@ -76,7 +68,6 @@ function renderTable(arr) {
       });
       menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
     });
-
   });
   document.addEventListener('click', () => {
     document.querySelectorAll('.menu').forEach(m => m.style.display = 'none');
@@ -95,7 +86,7 @@ function renderTable(arr) {
 // Fetch data and render table
 async function fetchDataAndRender() {
   try {
-    const response = await fetch(url + '/grocery/all');
+    const response = await fetch(url + '/api/groceries/all');
     if (!response.ok) {
       throw new Error(`HTTP error: ${response.status}`);
     }
@@ -132,25 +123,26 @@ async function addProduct() {
     return;
   }
 
-  // New grocery object
-  const neu = {
+  // New grocery object (without id)
+  const newGrocery = {
     gtin, name, brand, category, imageUrl,
     amount, unit, drainedAmount, drainedUnit
   };
 
   try {
-    // POST to backend: /grocery
-    const response = await fetch(url + '/grocery/add', {
+    // POST to backend: /api/groceries
+    const response = await fetch(url + '/api/groceries/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(neu)
+      body: JSON.stringify(newGrocery)
     });
     if (!response.ok) {
       throw new Error(`Serverfehler: ${response.status}`);
     }
 
+    // The backend returns the new grocery object (with id)
     const created = await response.json();
 
     groceries.push(created);
@@ -236,7 +228,7 @@ function filtereTabelle(term = search.value, category = categoryFilter.value) {
   sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 }
 
-// Edit grocery
+// Edit grocery (uses id)
 async function edit(idx) {
   const p = groceriesFiltered[idx];
   p.name = prompt("Name:", p.name) ?? p.name;
@@ -248,9 +240,8 @@ async function edit(idx) {
   p.drainedAmount = Number(prompt("Abtropfgewicht:", p.drainedAmount)) || p.drainedAmount;
   p.drainedUnit = prompt("Abtropfgewicht Einheit:", p.drainedUnit) ?? p.drainedUnit;
 
-  // PUT to backend: /grocery/{gtin}
   try {
-    const response = await fetch(url + `/grocery/${p.gtin}`, {
+    const response = await fetch(url + `/api/groceries/${p.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -263,14 +254,13 @@ async function edit(idx) {
 
     const updated = await response.json();
 
-    const origIdx = groceries.findIndex(x => x.gtin === updated.gtin);
+    const origIdx = groceries.findIndex(x => x.id === updated.id);
     if (origIdx !== -1) {
       groceries[origIdx] = updated;
     } else {
       groceries.push(updated);
     }
 
-    // If category was changed, refill dropdown
     categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
     setCategoryDropdown();
 
@@ -283,27 +273,25 @@ async function edit(idx) {
   }
 }
 
-// Delete grocery
+// Delete grocery (uses id)
 async function deleteGrocery(idx) {
   const p = groceriesFiltered[idx];
 
   if (!confirm(`Lebensmittel "${p.name}" wirklich löschen?`)) return;
 
   try {
-    // DELETE to backend: /grocery/{gtin}
-    const response = await fetch(url + `/grocery/${p.gtin}`, {
+    const response = await fetch(url + `/api/groceries/${p.id}`, {
       method: 'DELETE'
     });
     if (!response.ok) {
       throw new Error(`Backend error on delete: ${response.status}`);
     }
 
-    const origIdx = groceries.findIndex(x => x.gtin === p.gtin);
+    const origIdx = groceries.findIndex(x => x.id === p.id);
     if (origIdx !== -1) {
       groceries.splice(origIdx, 1);
     }
 
-    // Refill category dropdown, filter/re-render table
     categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
     setCategoryDropdown();
     filtereTabelle(search.value, categoryFilter.value);
@@ -330,11 +318,9 @@ function showToast(message, duration = 3000) {
 }
 
 function exportCSV() {
-  // Define header
   const header = [
     'GTIN', 'Name', 'Brand', 'Category', 'Amount', 'Unit', 'DrainedAmount', 'DrainedUnit'
   ];
-  // Generate data rows
   const rows = groceriesFiltered.map(p => [
     p.gtin,
     `"${p.name.replace(/"/g, '""')}"`,
@@ -346,12 +332,10 @@ function exportCSV() {
     `"${p.drainedUnit.replace(/"/g, '""')}"`
   ]);
 
-  // Build CSV string
   const csvContent =
     header.join(',') + '\n' +
     rows.map(r => r.join(',')).join('\n');
 
-  // Create blob and download link
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

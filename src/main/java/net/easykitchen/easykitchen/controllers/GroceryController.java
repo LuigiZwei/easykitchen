@@ -3,20 +3,15 @@ package net.easykitchen.easykitchen.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import net.easykitchen.easykitchen.Database;
 import net.easykitchen.easykitchen.dtos.GroceryDto;
 import net.easykitchen.easykitchen.entities.Grocery;
 import net.easykitchen.easykitchen.mappers.GroceryMapper;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-@RequestMapping("/grocery")
+@RequestMapping("/api/groceries")
 public class GroceryController {
     private final GroceryMapper groceryMapper;
 
@@ -39,7 +34,7 @@ public class GroceryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<GroceryDto> getGrocery(@PathVariable int id) {
-        Grocery grocery = Database.loadGroceryById(id); // You need to implement this method
+        Grocery grocery = Database.loadGroceryById(id);
         if (grocery == null) {
             return ResponseEntity.notFound().build();
         } else {
@@ -50,13 +45,32 @@ public class GroceryController {
     @PostMapping("/add")
     public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
         Grocery grocery = groceryMapper.toEntity(groceryDto);
-        Database.addGrocery(
-                grocery.getGtin(), grocery.getName(), grocery.getBrand(),
-                grocery.getCategory(), grocery.getImageUrl(), grocery.getAmount(), grocery.getUnit(),
-                grocery.getDrainedAmount(), grocery.getDrainedUnit());
-        // Optionally reload the saved grocery with its ID and return it
-        // Or return the DTO as is
-        return ResponseEntity.ok(groceryDto);
+        // Save grocery and get the saved entity with generated id
+        Grocery saved = Database.addGrocery(grocery);
+        GroceryDto savedDto = groceryMapper.toDto(saved);
+        return ResponseEntity.ok(savedDto);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<GroceryDto> updateGrocery(@PathVariable int id, @RequestBody GroceryDto groceryDto) {
+        Grocery grocery = groceryMapper.toEntity(groceryDto);
+        grocery.setId(id);
+        boolean updated = Database.updateGrocery(grocery);
+        if (updated) {
+            Grocery updatedGrocery = Database.loadGroceryById(id);
+            return ResponseEntity.ok(groceryMapper.toDto(updatedGrocery));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteGrocery(@PathVariable int id) {
+        boolean deleted = Database.deleteGroceryById(id);
+        if (deleted) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

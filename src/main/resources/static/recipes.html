@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="recipes.css" />
 </head>
 <body>
-  <!-- Sticky Header mit Such- und Filterleiste -->
+  <!-- Sticky header with search and filter bar -->
   <header class="sticky-header">
     <h1>Gespeicherte Rezepte</h1>
     <div class="controls">
@@ -20,7 +20,7 @@
         <option value="date-desc">Datum ↓</option>
       </select>
 
-      <!-- Checkbox „Nur Favoriten“ -->
+      <!-- Checkbox "Nur Favoriten" -->
       <label class="favorites-filter">
         <input type="checkbox" id="favorites-only"/>
         Nur Favoriten
@@ -44,14 +44,14 @@
       <textarea id="instructions" placeholder="Anleitung" rows="3" required></textarea>
 
       <label for="tags-input">Tags (Komma-getrennt):</label>
-      <!-- Datalist für smarte Tag-Vorschläge -->
+      <!-- Datalist for smart tag suggestions -->
       <input type="text" id="tags-input" placeholder="z. B. Vegetarisch, Schnell" list="tags-list" />
       <datalist id="tags-list"></datalist>
 
       <label for="image-input">Bild hochladen:</label>
       <input type="file" id="image-input" accept="image/*" />
 
-      <!-- Dynamische Zutatenliste -->
+      <!-- Dynamic ingredient list -->
       <fieldset id="ingredients-fieldset">
         <legend>Zutaten</legend>
         <div class="ingredient-row">
@@ -67,7 +67,7 @@
       <p id="form-error" class="error" role="alert" hidden></p>
     </form>
 
-    <!-- Wochenplan-Abschnitt -->
+    <!-- Weekly planner section -->
     <h2>Wochenplan</h2>
     <div id="weekly-planner">
       <div class="day-slot" data-day="Montag">
@@ -107,10 +107,10 @@
     </div>
   </main>
 
-  <!-- Scroll-to-Top Button -->
+  <!-- Scroll-to-top button -->
   <button id="scroll-top" aria-label="Nach oben scrollen">↑</button>
 
-  <!-- Sticky Footer -->
+  <!-- Sticky footer -->
   <footer class="sticky-footer">
     <p>© 2025 Meine Rezepte   |   <a href="#">Kontakt</a>   |   <a href="#">Impressum</a></p>
   </footer>
