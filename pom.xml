@@ -70,15 +70,16 @@
         </dependency>
 
 		<dependency>
-            <artifactId>lombok</artifactId>
-            <groupId>org.projectlombok</groupId>
-            <scope>annotationProcessor</scope>
-        </dependency>
-		
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>1.18.38</version> <!-- oder aktuelle Version -->
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
-            <artifactId>mapstruct-processor</artifactId>
-            <groupId>org.mapstruct</groupId>
-            <version>1.6.3</version>
+			<artifactId>mapstruct-processor</artifactId>
+			<groupId>org.mapstruct</groupId>
+			<version>1.6.3</version>
         </dependency>
 		
         <dependency>
@@ -94,6 +95,21 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+		<plugin>
+  			<groupId>org.apache.maven.plugins</groupId>
+  			<artifactId>maven-compiler-plugin</artifactId>
+  			<version>3.13.0</version>
+  			<configuration>
+  			  <annotationProcessorPaths>
+  			    <path>
+  			      <groupId>org.projectlombok</groupId>
+  			      <artifactId>lombok</artifactId>
+  			      <version>1.18.38</version>
+  			    </path>
+  			  </annotationProcessorPaths>
+  			</configuration>
+		</plugin>
+
 		</plugins>
 	</build>
 
