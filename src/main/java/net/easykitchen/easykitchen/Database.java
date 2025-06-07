@@ -13,7 +13,8 @@ import java.util.ArrayList;
 
 public class Database {
 
-    private static final String DB_URL = "jdbc:sqlite:groceries.db";
+    // Save the database in the "data" folder in your project directory
+    private static final String DB_URL = "jdbc:sqlite:data/groceries.db";
 
     public static void createGroceryTable() {
         String sql = """
