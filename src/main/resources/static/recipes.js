@@ -1,4 +1,4 @@
-(function() {
+(function () {
   const apiBase = '/api/recipes';
   let editingId = null;
   let allRecipes = [];
@@ -410,16 +410,16 @@
           <h1>${recipe.title}</h1>
           <div class="meta">Erstellt am ${new Date(recipe.createdAt).toLocaleDateString('de-DE')}</div>
           ${recipe.tags && recipe.tags.length
-            ? `<div class="tags">${recipe.tags.map(t => `<span>${t}</span>`).join('')}</div>`
-            : ''}
+        ? `<div class="tags">${recipe.tags.map(t => `<span>${t}</span>`).join('')}</div>`
+        : ''}
           ${recipe.image
-            ? `<div class="image"><img src="${recipe.image}" alt="${recipe.title}" /></div>`
-            : ''}
+        ? `<div class="image"><img src="${recipe.image}" alt="${recipe.title}" /></div>`
+        : ''}
           ${recipe.ingredients && recipe.ingredients.length
-            ? `<div class="ingredients"><h2>Zutaten</h2><ul>${recipe.ingredients
-                .map(ing => `<li>${ing.name} – ${ing.amount}</li>`)
-                .join('')}</ul></div>`
-            : ''}
+        ? `<div class="ingredients"><h2>Zutaten</h2><ul>${recipe.ingredients
+          .map(ing => `<li>${ing.name} – ${ing.amount}</li>`)
+          .join('')}</ul></div>`
+        : ''}
           <div class="instructions"><h2>Anleitung</h2><p>${recipe.instructions}</p></div>
           <script>
             window.onload = () => { window.print(); window.close(); };

@@ -24,7 +24,8 @@ body {
 }
 
 main {
-  margin-top: 140px; /* Height of sticky header, adjust if needed */
+  margin-top: 140px;
+  /* Height of sticky header, adjust if needed */
   padding: 1rem 2rem;
   max-width: 1200px;
   margin-left: auto;
@@ -33,8 +34,15 @@ main {
 
 /* Smooth fade-in for cards when inserted */
 @keyframes fadeInCard {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===============================
@@ -47,7 +55,7 @@ main {
   z-index: 1000;
   padding: 1rem 2rem;
   border-bottom: 1px solid #ddd;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .sticky-header h1 {
@@ -293,7 +301,7 @@ main {
 }
 
 /* Instructions text */
-.recipe-body > p:last-child {
+.recipe-body>p:last-child {
   margin-top: 0.5rem;
   flex: 1;
 }
@@ -311,11 +319,11 @@ form {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 form:hover {
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 input,
@@ -470,7 +478,7 @@ fieldset#ingredients-fieldset:hover {
   padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 #shopping-items {

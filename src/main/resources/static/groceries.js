@@ -4,7 +4,7 @@ const groceries = []; // Full array of all fetched grocery objects
 let sortKey = '', sortAsc = true;
 let groceriesFiltered = [...groceries];
 
-const url = "http://localhost:8080"
+const url = window.location.origin;
 const table = document.getElementById("groceryTable");
 const search = document.getElementById("search");
 const display = document.getElementById("groceryCount");
