@@ -11,7 +11,7 @@ const display = document.getElementById("groceryCount");
 const categoryFilter = document.getElementById("categoryFilter");
 const buttonAddGrocery = document.getElementById("buttonAddGrocery");
 
-// Update dashboard with filtered grocery count
+// Update dashboard with filtered grocery count and statistics
 function updateDashboard() {
   display.textContent = groceriesFiltered.length;
   const sum = groceriesFiltered.reduce((acc, p) => acc + (p.amount || 0), 0);
@@ -30,6 +30,7 @@ function updateDashboard() {
   });
 }
 
+// Render the grocery table rows
 function renderTable(arr) {
   table.innerHTML = '';
   arr.forEach((p, idx) => {
@@ -83,7 +84,7 @@ function renderTable(arr) {
   updateDashboard();
 }
 
-// Fetch data and render table
+// Fetch groceries from backend and render table
 async function fetchDataAndRender() {
   try {
     const response = await fetch(url + '/api/groceries/all');
@@ -92,6 +93,7 @@ async function fetchDataAndRender() {
     }
     const data = await response.json();
 
+    // Ensure data is always an array
     const newData = Array.isArray(data) ? data : [data];
 
     groceries.length = 0;
@@ -105,6 +107,7 @@ async function fetchDataAndRender() {
   }
 }
 
+// Add a new grocery product (POST to backend)
 async function addProduct() {
   const gtin = document.getElementById("in_gtin").value.trim();
   const name = document.getElementById("in_name").value.trim();
@@ -116,7 +119,7 @@ async function addProduct() {
   const drainedAmount = Number(document.getElementById("in_drainedAmt").value);
   const drainedUnit = document.getElementById("in_drainedUnit").value.trim();
 
-  // Validation
+  // Validation for required fields and GTIN length
   if (!gtin || gtin.toString().length > 14 || gtin.toString().length < 8
     || !name || !brand || !category || amount <= 0 || !unit) {
     alert("Bitte gültige Werte eingeben! GTIN muss 8–14 Ziffern haben. Name, Marke, Kategorie, Menge (>0) und Einheit sind Pflichtfelder.");
@@ -130,7 +133,7 @@ async function addProduct() {
   };
 
   try {
-    // POST to backend: /api/groceries
+    // POST to backend: /api/groceries/add
     const response = await fetch(url + '/api/groceries/add', {
       method: 'POST',
       headers: {
@@ -167,6 +170,7 @@ async function addProduct() {
   }
 }
 
+// Sort groceries by a given key (column)
 function sortBy(key) {
   if (sortKey === key) sortAsc = !sortAsc;
   else { sortKey = key; sortAsc = true; }
@@ -184,6 +188,7 @@ function sortBy(key) {
   renderTable(groceriesFiltered);
 }
 
+// Fill the category dropdown with unique categories from groceries
 function setCategoryDropdown() {
   categoryFilter.innerHTML = '<option value="all">Alle Kategorien</option>';
   const categories = [...new Set(groceries.map(p => p.category))];
@@ -195,6 +200,7 @@ function setCategoryDropdown() {
   });
 }
 
+// Filter the table by search term and/or category
 function filtereTabelle(term = search.value, category = categoryFilter.value) {
   const t = term.trim().toLowerCase();
   const matchOperator = t.match(/^([<>=])\s*(\d+(\.\d+)?)/);
@@ -202,6 +208,7 @@ function filtereTabelle(term = search.value, category = categoryFilter.value) {
   groceriesFiltered = groceries.filter(p => {
     const passtZurKategorie = (category === 'all' || p.category.toLowerCase() === category.toLowerCase());
 
+    // Support for numeric operators in search (e.g. "> 100")
     if (matchOperator) {
       const operator = matchOperator[1];
       const wert = parseFloat(matchOperator[2]);
@@ -228,7 +235,7 @@ function filtereTabelle(term = search.value, category = categoryFilter.value) {
   sortKey ? sortBy(sortKey) : renderTable(groceriesFiltered);
 }
 
-// Edit grocery (uses id)
+// Edit grocery (uses id, updates via PUT)
 async function edit(idx) {
   const p = groceriesFiltered[idx];
   p.name = prompt("Name:", p.name) ?? p.name;
@@ -254,6 +261,7 @@ async function edit(idx) {
 
     const updated = await response.json();
 
+    // Update the original groceries array with the updated item
     const origIdx = groceries.findIndex(x => x.id === updated.id);
     if (origIdx !== -1) {
       groceries[origIdx] = updated;
@@ -273,7 +281,7 @@ async function edit(idx) {
   }
 }
 
-// Delete grocery (uses id)
+// Delete grocery (uses id, deletes via DELETE)
 async function deleteGrocery(idx) {
   const p = groceriesFiltered[idx];
 
@@ -287,6 +295,7 @@ async function deleteGrocery(idx) {
       throw new Error(`Backend error on delete: ${response.status}`);
     }
 
+    // Remove from original groceries array
     const origIdx = groceries.findIndex(x => x.id === p.id);
     if (origIdx !== -1) {
       groceries.splice(origIdx, 1);
@@ -304,7 +313,7 @@ async function deleteGrocery(idx) {
   }
 }
 
-// Show toast message
+// Show toast message (notification popup)
 function showToast(message, duration = 3000) {
   const container = document.getElementById("toastContainer");
   const toast = document.createElement("div");
@@ -317,6 +326,7 @@ function showToast(message, duration = 3000) {
   }, duration);
 }
 
+// Export the filtered groceries as a CSV file
 function exportCSV() {
   const header = [
     'GTIN', 'Name', 'Brand', 'Category', 'Amount', 'Unit', 'DrainedAmount', 'DrainedUnit'
@@ -347,7 +357,7 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
-// Event listeners
+// Event listeners for sorting, searching, filtering, adding, and exporting
 document.querySelectorAll("th[data-key]").forEach(th =>
   th.addEventListener("click", () => sortBy(th.dataset.key))
 );
@@ -361,7 +371,7 @@ buttonAddGrocery.addEventListener("click", addProduct);
 document.getElementById('buttonExportCsv')
   .addEventListener('click', exportCSV);
 
-// Initialization
+// Initialization on page load
 document.addEventListener('DOMContentLoaded', () => {
   fetchDataAndRender();
   renderTable(groceriesFiltered);

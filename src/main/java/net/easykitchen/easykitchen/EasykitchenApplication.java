@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EasykitchenApplication {
 
     public static void main(String[] args) {
+        // Start the Spring Boot application
         SpringApplication.run(EasykitchenApplication.class, args);
         System.out.println("EasyKitchen application started!");
     }

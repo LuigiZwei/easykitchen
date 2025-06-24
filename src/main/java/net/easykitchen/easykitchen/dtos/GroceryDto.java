@@ -21,6 +21,7 @@ public class GroceryDto {
     private float drainedAmount;
     private String drainedUnit;
 
+    // Constructor for DTO with only id (can be used for delete operations)
     public GroceryDto(int id) {
         this.id = id;
     }

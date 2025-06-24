@@ -533,6 +533,7 @@ fieldset#ingredients-fieldset:hover {
 /* ===============================
   10) Recipe list drag-over effect
    =============================== */
+/* Highlight the recipe list when an item is dragged over it */
 #recipe-list.drag-over-recipe-list {
   background-color: #ffe0e0;
 }
@@ -540,6 +541,7 @@ fieldset#ingredients-fieldset:hover {
 /* ===============================
   11) .dragging for transparency
    =============================== */
+/* Make the dragged element semi-transparent */
 .dragging {
   opacity: 0.5;
 }

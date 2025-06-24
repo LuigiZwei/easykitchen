@@ -1,14 +1,14 @@
-# 1. Basis-Image mit Java 21 (passend zu deiner Java-Version)
+# 1. Base image with Java 21 version
 FROM eclipse-temurin:21-jre-jammy
 
-# 2. Arbeitsverzeichnis im Container
+# 2. Set working directory inside the container
 WORKDIR /app
 
-# 3. Kopiere die Jar-Datei in das Arbeitsverzeichnis
+# 3. Copy the built JAR file into the working directory
 COPY target/easykitchen-0.0.1-SNAPSHOT.jar app.jar
 
-# 4. Container beim Start mit der Jar ausführen
+# 4. Run the JAR file when the container starts
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
-# 5. Exponiere den Port, auf dem die Anwendung läuft (optional, falls benötigt)
+# 5. Expose the port the application runs on
 EXPOSE 8080

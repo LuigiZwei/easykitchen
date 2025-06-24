@@ -112,6 +112,7 @@
         const buttonContainer = document.createElement('div');
         buttonContainer.classList.add('recipe-buttons');
 
+        // Edit, Delete, Print buttons for each recipe card
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Bearbeiten';
         editBtn.classList.add('edit-btn');
@@ -253,7 +254,7 @@
     renderRecipes(filtered);
   }
 
-  // Reset form
+  // Reset form to initial state for adding a new recipe
   function resetForm() {
     editingId = null;
     document.getElementById('form-title').textContent = 'Neues Rezept hinzufügen';
@@ -270,11 +271,13 @@
     renderTagFilters();
   }
 
+  // Remove all ingredient rows from the form
   function clearIngredientsFields() {
     const fieldset = document.getElementById('ingredients-fieldset');
     Array.from(fieldset.querySelectorAll('.ingredient-row')).forEach(row => row.remove());
   }
 
+  // Add a new ingredient row to the form (optionally prefilled)
   function addIngredientRow(name = '', amount = '') {
     const fieldset = document.getElementById('ingredients-fieldset');
     const row = document.createElement('div');
@@ -306,6 +309,7 @@
     fieldset.insertBefore(row, document.getElementById('add-ingredient'));
   }
 
+  // Parse comma-separated tags input into array
   function parseTagsInput(input) {
     return input
       .split(',')
@@ -367,12 +371,14 @@
 
     try {
       if (editingId) {
+        // Update existing recipe
         await apiFetch(`${apiBase}/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
       } else {
+        // Create new recipe
         await apiFetch(apiBase, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -430,7 +436,7 @@
     w.document.close();
   }
 
-  // Removes recipe ID from all days
+  // Removes recipe ID from all days in the weekly plan
   function removeFromAllDays(recipeId) {
     for (const day of Object.keys(weeklyPlan)) {
       const idx = weeklyPlan[day].indexOf(recipeId);
@@ -529,6 +535,7 @@
               const curr = ing.amount;
               const numPrev = parseFloat(prev);
               const numCurr = parseFloat(curr);
+              // Try to sum numeric amounts, otherwise concatenate
               if (!isNaN(numPrev) && !isNaN(numCurr)) {
                 const unit = prev.replace(numPrev, '');
                 combined[key] = `${numPrev + numCurr}${unit}`;
@@ -651,6 +658,7 @@
   // Shopping list
   document.getElementById('generate-list').addEventListener('click', generateShoppingList);
 
+  // Initialize page on DOM ready
   document.addEventListener('DOMContentLoaded', () => {
     resetForm();
     loadRecipes();

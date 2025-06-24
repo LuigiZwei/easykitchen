@@ -28,48 +28,56 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>21</java.version>		<!-- Java version for compilation -->
 	</properties>
 	<dependencies>
 
+		<!-- Spring Boot Actuator for monitoring and management endpoints -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
+		<!-- Core Spring Boot starter dependency -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
 
+		<!-- Spring Boot starter for testing (JUnit, Mockito, etc.) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Spring Boot starter for building web applications (REST, MVC) -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Spring Boot DevTools for hot reload during development -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<optional>true</optional>
 		</dependency>
 
+		<!-- SQLite JDBC driver for database access -->
 		<dependency>
 			<groupId>org.xerial</groupId>
 			<artifactId>sqlite-jdbc</artifactId>
 			<version>3.45.3.0</version>
 		</dependency>
 
+		<!-- Spring Boot starter for Thymeleaf template engine -->
 		<dependency>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 			<groupId>org.springframework.boot</groupId>
 		</dependency>
 
+		<!-- Lombok for reducing boilerplate code (getters/setters, etc.) -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -77,6 +85,7 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- MapStruct for automatic mapping between DTOs and entities -->
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
@@ -87,10 +96,12 @@
 
 	<build>
 		<plugins>
+			<!-- Spring Boot Maven plugin for building executable JARs -->
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<!-- Maven Compiler Plugin for Java version and annotation processing -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -99,11 +110,13 @@
 					<source>21</source>
 					<target>21</target>
 					<annotationProcessorPaths>
+						<!-- Lombok annotation processor -->
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
 							<version>1.18.38</version>
 						</path>
+						<!-- MapStruct annotation processor -->
 						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
@@ -113,6 +126,7 @@
 				</configuration>
 			</plugin>
 
+			<!-- Build Helper Plugin to add generated sources for annotation processors -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>

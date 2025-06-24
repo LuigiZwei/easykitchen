@@ -10,6 +10,7 @@
 </head>
 
 <body>
+    <!-- Header with navigation and page title -->
     <div class="header">
         <div class="heading">
             <h1>EasyKitchen</h1>
@@ -26,16 +27,17 @@
         <div class="content">
             <h1>Deine Lebensmittel:</h1>
 
-            <!-- Search bar -->
+            <!-- Search bar for filtering groceries -->
             <label for="search"><strong>Suche:</strong></label>
             <input type="text" id="search" placeholder="Suche … (Name, Marke, Kategorie …)" />
 
+            <!-- Dropdown to filter by category -->
             <label for="categoryFilter"><strong>Nach Kategorie filtern:</strong></label>
             <select id="categoryFilter">
                 <option value="all">Alle Kategorien</option>
             </select>
 
-            <!-- Input row for new grocery -->
+            <!-- Input row for adding a new grocery item -->
             <label for="addGrocery"><strong>Neues Lebensmittel</strong></label>
             <div id="addGrocery">
                 <input type="text" id="in_gtin" placeholder="GTIN" autocomplete="off" />
@@ -50,6 +52,7 @@
                 <button id="buttonAddGrocery">Hinzufügen</button>
             </div>
 
+            <!-- Table displaying all groceries -->
             <table class="styledTable">
                 <thead>
                     <tr>
@@ -66,19 +69,21 @@
                     </tr>
                 </thead>
                 <tbody id="groceryTable">
-                    <!-- Data rows will be inserted here -->
+                    <!-- Data rows will be inserted here by JavaScript -->
                 </tbody>
             </table>
+            <!-- Dashboard with statistics about groceries -->
             <div class="dashboard">
                 <p><strong>Gesamtanzahl Lebensmittel:</strong> <span id="groceryCount">0</span></p>
                 <p><strong>Durchschnittliche Menge:</strong> <span id="groceryAverageAmount">0</span></p>
                 <strong>Lebensmittel pro Kategorie:</strong>
                 <ul id="categoryStatistic"></ul>
             </div>
+            <!-- Button to export the grocery list as CSV -->
             <button id="buttonExportCsv">Exportiere als CSV</button>
         </div>
     </div>
-    <!-- Toast Container -->
+    <!-- Toast Container for notifications -->
     <div id="toastContainer"></div>
     <script src="groceries.js"></script>
 </body>

@@ -9,15 +9,16 @@ import org.springframework.context.annotation.ComponentScan;
 
 import net.easykitchen.easykitchen.mappers.GroceryMapper;
 
-@SpringBootTest
+@SpringBootTest // Loads the full Spring application context for integration testing
 @ComponentScan(basePackages = "net.easykitchen.easykitchen")
 class EasykitchenApplicationTests {
-	
+
 	@Autowired
-    private GroceryMapper groceryMapper;
+	private GroceryMapper groceryMapper; // Mapper bean should be injected by Spring
 
 	@Test
 	void contextLoads() {
+		// Test that the Spring context loads and GroceryMapper is available
 		assertNotNull(groceryMapper, "GroceryMapper bean should be injected");
 	}
 }

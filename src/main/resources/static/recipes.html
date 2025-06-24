@@ -13,8 +13,10 @@
   <header class="sticky-header">
     <h1>Gespeicherte Rezepte</h1>
     <div class="controls">
+      <!-- Search input for filtering recipes by title or instructions -->
       <input type="text" id="search-input" placeholder="Nach Titel suchen…" />
 
+      <!-- Dropdown for sorting recipes by title or date -->
       <select id="sort-select">
         <option value="title-asc">Titel ↑</option>
         <option value="title-desc">Titel ↓</option>
@@ -22,19 +24,23 @@
         <option value="date-desc">Datum ↓</option>
       </select>
 
-      <!-- Checkbox "Nur Favoriten" -->
+      <!-- Checkbox to filter only favorite recipes -->
       <label class="favorites-filter">
         <input type="checkbox" id="favorites-only" />
         Nur Favoriten
       </label>
 
+      <!-- Tag filter checkboxes will be rendered here by JS -->
       <div id="tag-filters"></div>
     </div>
   </header>
 
   <main>
+    <!-- Loading indicator while recipes are being fetched -->
     <div id="loading" hidden>Lade Rezepte…</div>
+    <!-- List of recipe cards (rendered by JS) -->
     <ul id="recipe-list" aria-live="polite"></ul>
+    <!-- Error message if recipes could not be loaded -->
     <p id="load-error" class="error" role="alert" hidden>Konnte Rezepte nicht laden.</p>
 
     <h2 id="form-title">Neues Rezept hinzufügen</h2>
@@ -46,14 +52,14 @@
       <textarea id="instructions" placeholder="Anleitung" rows="3" required></textarea>
 
       <label for="tags-input">Tags (Komma-getrennt):</label>
-      <!-- Datalist for smart tag suggestions -->
+      <!-- Datalist for smart tag suggestions (filled by JS) -->
       <input type="text" id="tags-input" placeholder="z. B. Vegetarisch, Schnell" list="tags-list" />
       <datalist id="tags-list"></datalist>
 
       <label for="image-input">Bild hochladen:</label>
       <input type="file" id="image-input" accept="image/*" />
 
-      <!-- Dynamic ingredient list -->
+      <!-- Dynamic ingredient list (rows can be added/removed by user) -->
       <fieldset id="ingredients-fieldset">
         <legend>Zutaten</legend>
         <div class="ingredient-row">
@@ -66,12 +72,14 @@
 
       <button type="submit" id="submit-button">Speichern</button>
       <button type="button" id="cancel-edit" hidden>Abbrechen</button>
+      <!-- Error message for form validation or save errors -->
       <p id="form-error" class="error" role="alert" hidden></p>
     </form>
 
-    <!-- Weekly planner section -->
+    <!-- Weekly planner section for assigning recipes to days -->
     <h2>Wochenplan</h2>
     <div id="weekly-planner">
+      <!-- Each day-slot is a drop target for recipes (drag & drop) -->
       <div class="day-slot" data-day="Montag">
         <h3>Montag</h3>
         <ul class="plan-list"></ul>
@@ -102,6 +110,7 @@
       </div>
     </div>
 
+    <!-- Button to generate a shopping list from the weekly plan -->
     <button id="generate-list">Einkaufsliste generieren</button>
     <div id="shopping-list" hidden>
       <h2>Einkaufsliste</h2>
@@ -109,15 +118,17 @@
     </div>
   </main>
 
-  <!-- Scroll-to-top button -->
+  <!-- Scroll-to-top button appears when user scrolls down -->
   <button id="scroll-top" aria-label="Nach oben scrollen">↑</button>
 
-  <!-- Sticky footer -->
+  <!-- Sticky footer with copyright and links -->
   <footer class="sticky-footer">
     <p>© 2025 Meine Rezepte | <a href="#">Kontakt</a> | <a href="#">Impressum</a></p>
   </footer>
 
+  <!-- JS: mock backend for recipes (for development/demo) -->
   <script src="mock-backend.js"></script>
+  <!-- JS: main logic for recipes page -->
   <script src="recipes.js"></script>
 </body>
 

@@ -19,6 +19,7 @@ public class GroceryController {
         this.groceryMapper = groceryMapper;
     }
 
+    // Returns all groceries as DTOs
     @GetMapping("/all")
     public ResponseEntity<List<GroceryDto>> getAllGroceries() {
         List<Grocery> groceries = Database.loadGroceries();
@@ -32,6 +33,7 @@ public class GroceryController {
         }
     }
 
+    // Returns a single grocery by id
     @GetMapping("/{id}")
     public ResponseEntity<GroceryDto> getGrocery(@PathVariable int id) {
         Grocery grocery = Database.loadGroceryById(id);
@@ -42,15 +44,16 @@ public class GroceryController {
         }
     }
 
+    // Adds a new grocery and returns the saved grocery (with generated id)
     @PostMapping("/add")
     public ResponseEntity<GroceryDto> addGrocery(@RequestBody GroceryDto groceryDto) {
         Grocery grocery = groceryMapper.toEntity(groceryDto);
-        // Save grocery and get the saved entity with generated id
-        Grocery saved = Database.addGrocery(grocery);
+        Grocery saved = Database.addGrocery(grocery); // Save and get entity with id
         GroceryDto savedDto = groceryMapper.toDto(saved);
         return ResponseEntity.ok(savedDto);
     }
 
+    // Updates an existing grocery by id
     @PutMapping("/{id}")
     public ResponseEntity<GroceryDto> updateGrocery(@PathVariable int id, @RequestBody GroceryDto groceryDto) {
         Grocery grocery = groceryMapper.toEntity(groceryDto);
@@ -64,6 +67,7 @@ public class GroceryController {
         }
     }
 
+    // Deletes a grocery by id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteGrocery(@PathVariable int id) {
         boolean deleted = Database.deleteGroceryById(id);

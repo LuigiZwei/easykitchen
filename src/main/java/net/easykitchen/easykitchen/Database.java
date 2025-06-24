@@ -41,7 +41,7 @@ public class Database {
     }
 
     public static void deleteTable(String name) {
-        // Only allow deletion of the groceries table
+        // Only allow deletion of the groceries table for safety
         if (!"groceries".equals(name)) {
             throw new IllegalArgumentException("Invalid table name");
         }
@@ -73,6 +73,7 @@ public class Database {
 
             pstmt.executeUpdate();
 
+            // Retrieve the generated id and return the full Grocery object
             try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                 if (generatedKeys.next()) {
                     int id = generatedKeys.getInt(1);
@@ -124,6 +125,7 @@ public class Database {
         return false;
     }
 
+    // Load all groceries from the database, sorted by name
     public static List<Grocery> loadGroceries() {
         List<Grocery> groceries = new ArrayList<>();
 
@@ -153,6 +155,7 @@ public class Database {
         return groceries;
     }
 
+    // Load a single grocery by its id
     public static Grocery loadGroceryById(int id) {
         String sql = "SELECT * FROM groceries WHERE id = ?";
         try (Connection conn = DriverManager.getConnection(DB_URL);

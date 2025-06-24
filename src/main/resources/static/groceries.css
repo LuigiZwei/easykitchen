@@ -7,6 +7,7 @@ body {
 }
 
 
+/* Main container for the groceries page */
 .main {
   background-color: rgb(21, 146, 48);
   display: flex;
@@ -16,6 +17,7 @@ body {
   margin: 10px;
 }
 
+/* Content area inside the main container */
 .content {
   display: flex;
   flex-direction: column;
@@ -25,6 +27,7 @@ body {
   box-sizing: border-box;
 }
 
+/* Header section with navigation and title */
 .header {
   background-color: #535353;
   display: flex;
@@ -38,6 +41,7 @@ body {
   justify-content: space-between;
 }
 
+/* Heading area for the page title */
 .heading {
   background-color: rgb(21, 146, 48);
   border-radius: 15px;
@@ -57,6 +61,7 @@ h1 {
   font-size: 24px;
 }
 
+/* Navigation bar inside the header */
 .header nav {
   flex: 2;
   display: flex;
@@ -82,6 +87,7 @@ h1 {
   transition: all 0.3s ease;
 }
 
+/* Underline animation for navigation links */
 .header nav ul li a::after {
   content: "";
   position: absolute;
@@ -111,7 +117,7 @@ h1 {
   color: white;
 }
 
-/* Dashboard */
+/* Dashboard section with statistics */
 .dashboard {
   margin: 10px 0px 10px 0px;
   padding: 10px;
@@ -119,7 +125,6 @@ h1 {
   border: 1px solid #ccc;
   border-radius: 6px;
   /*box-shadow: 10px 10px 8px 10px #09cc23;*/
-
 }
 
 .dashboard #categoryStatistic {
@@ -128,12 +133,12 @@ h1 {
   padding: 0;
 }
 
-/* general input styling */
+/* General input styling */
 input {
   border: 2px solid #8d8d8d;
 }
 
-/*search field styling*/
+/* Search field and number input styling */
 input[type="text"],
 input[type="number"] {
   border-radius: 5px;
@@ -142,7 +147,7 @@ input[type="number"] {
   margin: 0px 0px 10px 0px;
 }
 
-/* styled grocery table */
+/* Styled grocery table */
 .styledTable {
   width: 100%;
   border-collapse: collapse;
@@ -152,35 +157,36 @@ input[type="number"] {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* table header */
+/* Table header styling */
 .styledTable thead tr {
   background-color: #353535;
   color: #ffffff;
   text-align: left;
 }
 
-/* cell size */
+/* Cell size for table */
 .styledTable th,
 .styledTable td {
   padding: 12px 15px;
   border: 1px solid #dddddd;
 }
 
-/* odd rows different color */
+/* Odd rows have a different background color */
 .styledTable tbody tr {
   background-color: #f9f9f9;
 }
 
-/* even rows different color */
+/* Even rows have a different background color */
 .styledTable tbody tr:nth-of-type(even) {
   background-color: #f1f1f1;
 }
 
-/* hover row color */
+/* Row hover effect */
 .styledTable tbody tr:hover {
   background-color: #e0e0e0;
 }
 
+/* Sorting indicators for table headers */
 th.sort-asc::after {
   content: " ▲";
 }
@@ -189,8 +195,7 @@ th.sort-desc::after {
   content: " ▼";
 }
 
-
-/* button styling */
+/* Button styling */
 button {
   padding: 6px 12px;
   margin: 2px;
@@ -201,9 +206,7 @@ button {
   margin-bottom: 15px;
 }
 
-
-
-/* Actions menu delete edit */
+/* Actions menu for delete/edit */
 .actions {
   position: relative;
 }
@@ -215,6 +218,7 @@ button {
   cursor: pointer;
 }
 
+/* Dropdown menu for actions */
 .menu {
   display: none;
   position: absolute;
@@ -241,7 +245,7 @@ button {
   background-color: #eee;
 }
 
-/* Toast message */
+/* Toast message styling (notification popup) */
 .toast {
   background-color: #333;
   color: white;
@@ -253,6 +257,7 @@ button {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Toast container for positioning toasts */
 #toastContainer {
   position: fixed;
   bottom: 20px;
@@ -263,7 +268,7 @@ button {
   gap: 10px;
 }
 
-/* Export button */
+/* Export button styling */
 #buttonExportCsv {
   padding: 0.5rem 1rem;
   border: 1px solid #333;

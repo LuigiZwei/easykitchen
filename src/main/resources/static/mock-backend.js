@@ -31,11 +31,14 @@
     }
   ];
 
+  // Generates a random id for new recipes
   function generateId() {
     return Math.random().toString(36).substr(2, 9);
   }
 
+  // Save the original fetch function
   const _fetch = window.fetch;
+  // Override window.fetch to intercept API calls for recipes
   window.fetch = async (input, init = {}) => {
     const url = typeof input === 'string' ? input : input.url;
     const parsed = new URL(url, location.href);
@@ -43,13 +46,15 @@
     const method = (init.method || 'GET').toUpperCase();
     const body = init.body ? JSON.parse(init.body) : null;
 
+    // Only handle /api/recipes endpoints, otherwise use the original fetch
     if (!path.startsWith('/api/recipes')) {
       return _fetch(input, init);
     }
 
-    await new Promise(res => setTimeout(res, 200)); // simulated latency
+    // Simulate network latency
+    await new Promise(res => setTimeout(res, 200));
 
-    // GET /api/recipes
+    // GET /api/recipes - return all recipes
     if (path === '/api/recipes' && method === 'GET') {
       return new Response(JSON.stringify(recipes), {
         status: 200,
@@ -57,7 +62,7 @@
       });
     }
 
-    // POST /api/recipes
+    // POST /api/recipes - add a new recipe
     if (path === '/api/recipes' && method === 'POST') {
       const newRecipe = {
         id: generateId(),
@@ -76,13 +81,13 @@
       });
     }
 
-    // /api/recipes/{id}
+    // Handle /api/recipes/{id} for GET, PUT, DELETE
     const idMatch = path.match(/^\/api\/recipes\/([^\/]+)$/);
     if (idMatch) {
       const id = idMatch[1];
       const idx = recipes.findIndex(r => r.id === id);
 
-      // GET single
+      // GET single recipe by id
       if (method === 'GET') {
         if (idx === -1) return new Response(null, { status: 404 });
         return new Response(JSON.stringify(recipes[idx]), {
@@ -91,7 +96,7 @@
         });
       }
 
-      // PUT (update)
+      // PUT (update) recipe by id
       if (method === 'PUT') {
         if (idx === -1) return new Response(null, { status: 404 });
         recipes[idx] = {
@@ -109,7 +114,7 @@
         });
       }
 
-      // DELETE
+      // DELETE recipe by id
       if (method === 'DELETE') {
         if (idx === -1) return new Response(null, { status: 404 });
         recipes.splice(idx, 1);
@@ -117,6 +122,7 @@
       }
     }
 
+    // If no route matches, return 404
     return new Response(null, { status: 404 });
   };
 })();

@@ -21,6 +21,7 @@ public class Grocery {
     private float drainedAmount;
     private String drainedUnit;
 
+    // Constructor for entity with only id
     public Grocery(int id) {
         this.id = id;
     }
