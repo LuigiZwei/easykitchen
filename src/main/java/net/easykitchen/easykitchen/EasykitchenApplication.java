@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * Main entry point for the EasyKitchen Spring Boot application.
+ * Information: Some parts of this code are inspired by ai-generated content.
  */
 @SpringBootApplication
 public class EasykitchenApplication {
